@@ -9,7 +9,7 @@ let db: Db;
 export const connectToDatabase = async () => {
   try {
     await client.connect();
-    db = client.db("MyFirstDatabase");
+    db = client.db("AdelinaTest");
     console.log("Connected to database");
   } catch (error) {
     console.error("Could not connect to database", error);

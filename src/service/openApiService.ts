@@ -12,13 +12,15 @@ export const getChatGPTResponse = async (prompt: string) => {
       messages: [{ role: "user", content: prompt }],
     });
     const fullResponse = response.choices[0].message.content;
+    console.log(fullResponse)
+    return fullResponse;
     // Remove the introductory sentence and return only the list
-    const startIndex = fullResponse!.indexOf("1.");
-    const medsList = fullResponse!
-      .slice(startIndex)
-      .split("\n")
-      .filter(Boolean);
-    return medsList;
+    // const startIndex = fullResponse!.indexOf("1.");
+    // const medsList = fullResponse!
+    //   .slice(startIndex)
+    //   .split("\n")
+    //   .filter(Boolean);
+    // return medsList;
   } catch (error) {
     console.error("Error getting response from OpenAI:", error);
     throw error;
