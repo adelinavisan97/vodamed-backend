@@ -8,37 +8,41 @@ interface AuthenticatedRequest extends Request {
   user?: any;
 }
 
-export const verifyToken = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
+export class VerifyMiddleware {
+  constructor() {}
 
-  if (!token) {
-    return res.status(403).json({ message: "No token provided" });
-  }
+  // Middleware to verify JWT token
+  public verifyToken = (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const token = req.headers["authorization"]?.split(" ")[1];
 
-  if (tokenBlacklist.has(token)) {
-    return res
-      .status(401)
-      .json({ message: "Unauthorized, token is blacklisted" });
-  }
-
-  jwt.verify(token, config.JwtSecret, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Unauthorized" });
+    if (!token) {
+      return res.status(403).json({ message: "No token provided" });
     }
 
-    req.user = decoded;
-    next();
-  });
-};
+    if (tokenBlacklist.has(token)) {
+      return res.status(401).json({ message: "Unauthorized, token is blacklisted" });
+    }
 
-export const logout = (req: AuthenticatedRequest, res: Response) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  if (token) {
-    tokenBlacklist.add(token);
-  }
-  res.status(200).json({ message: "Logged out successfully" });
-};
+    jwt.verify(token, config.JwtSecret, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      req.user = decoded;
+      next();
+    });
+  };
+
+  // Logout function to blacklist the token
+  public logout = (req: AuthenticatedRequest, res: Response) => {
+    const token = req.headers["authorization"]?.split(" ")[1];
+    if (token) {
+      tokenBlacklist.add(token);
+    }
+    res.status(200).json({ message: "Logged out successfully" });
+  };
+}

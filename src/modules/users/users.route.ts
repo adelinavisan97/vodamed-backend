@@ -1,11 +1,12 @@
 import express from "express";
 import { UsersService } from "./users.service";
 import { AuthenticationService } from "../aws/authentication.service";
-import { logout, verifyToken } from "./middleware/verfiy.middelware";
+import { VerifyMiddleware } from "./middleware/verfiy.middelware";
 
 const router = express.Router();
 const userService = new UsersService();
 const authenticaionService =  new AuthenticationService();
+const verifyMiddleware = new VerifyMiddleware();
 
 router.post("/signup", async (req, res) => {
   const user = req.body;
@@ -44,9 +45,9 @@ router.post("/signin", async (req, res) => {
   }
 });
 
-router.post("/logout", verifyToken, logout);
+router.post("/logout", verifyMiddleware.verifyToken, verifyMiddleware.logout);
 
-router.get("/info", verifyToken, async (req, res) => {
+router.get("/info", verifyMiddleware.verifyToken, async (req, res) => {
   try {
     const userEmail = (req as any).user.email;
     console.log(userEmail);
