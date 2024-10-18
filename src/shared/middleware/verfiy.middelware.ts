@@ -27,7 +27,7 @@ export class VerifyMiddleware {
       return res.status(401).json({ message: "Unauthorized, token is blacklisted" });
     }
 
-    jwt.verify(token, config.JwtSecret, (err, decoded) => {
+    jwt.verify(token, config.JwtSecret, (err: any, decoded: any) => {
       if (err) {
         return res.status(401).json({ message: "Unauthorized" });
       }

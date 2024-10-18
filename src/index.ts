@@ -20,10 +20,6 @@ app.use(
   })
 );
 
-app.get("/", (request, response) => {
-  console.log(request);
-  return response.status(234).send("This is the VodaMed backend");
-});
 
 app.use(express.json());
 app.use(bodyParser.json());
