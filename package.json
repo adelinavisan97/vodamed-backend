@@ -4,7 +4,9 @@
   "description": "vodamed-backend node project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.ts",
+    "dev": "nodemon src/index.ts"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +17,8 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/node": "^22.7.6"
+    "@types/node": "^22.7.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
   }
 }
