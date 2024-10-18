@@ -1,7 +1,8 @@
 import express from "express";
+import { UsersService } from "./users.service";
 
 const router = express.Router();
-const userService = new UserService();
+const userService = new UsersService();
 
 router.post("/signup", async (req, res) => {
   const user = req.body;

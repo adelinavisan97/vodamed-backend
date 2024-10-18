@@ -1,7 +1,8 @@
+import { UserRepository } from "../../database/user/user.repository";
 import { UserModel } from "./models/user.interface";
 
 
-export class UserService {
+export class UsersService {
   constructor(private userRepository = new UserRepository()) {}
 
   public addUser = async (
