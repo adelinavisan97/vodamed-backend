@@ -1,12 +1,12 @@
 {
-  "name": "vodamed-backend",
+ "name": "backend",
   "version": "1.0.0",
-  "description": "vodamed-backend node project",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.ts",
-    "dev": "nodemon --exec ts-node src/index.ts"
+    "start": "node dist/index.js",
+    "dev": "nodemon",
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",
