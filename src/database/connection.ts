@@ -1,4 +1,5 @@
 import { MongoClient, Db } from "mongodb";
+import { config } from "../config";
 
 const uri = config.mongoURL;
 const client = new MongoClient(uri);
