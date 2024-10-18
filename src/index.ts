@@ -36,8 +36,8 @@ app.use(bodyParser.json());
 //   }
 // });
 
-app.use("/gpt", gptRoute)
-app.use("/users", usersRoute);
+app.use("/api/gpt", gptRoute)
+app.use("/api/users", usersRoute);
 
 connectToDatabase()
   .then(() => {
