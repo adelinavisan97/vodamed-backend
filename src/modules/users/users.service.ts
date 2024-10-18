@@ -9,8 +9,6 @@ export class UsersService {
     user: Partial<UserModel>,
     cognitoSub: string
   ): Promise<UserModel> => {
-    const innerFunctionName = "userService.addUser";
-
     try {
       // Validate
       if (!cognitoSub) throw new Error("CognitoSub missing");
@@ -40,7 +38,7 @@ export class UsersService {
       const errorMessage = `Failed to add user. ${e}`;
       console.error({
         message: errorMessage,
-        innerFunctionName,
+        location: "userService.addUser",
       });
       throw e;
     }

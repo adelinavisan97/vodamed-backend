@@ -8,7 +8,7 @@ export const config = {
   Region: process.env.REGION!,
   ClientSecret: process.env.CLIENT_SECRET!,
   IdentityPoolId: process.env.IDENTITY_POOL_ID!,
-  UserCollectionName: "book-app-users",
+  UserCollectionName: "vodamed-users",
   JwtSecret: process.env.JWT_SECRET!,
   OpenAPiKey: process.env.OPEN_API_KEY!,
 };

@@ -22,21 +22,12 @@ app.use(
 
 app.get("/", (request, response) => {
   console.log(request);
-  return response.status(234).send("This is VodaMed");
+  return response.status(234).send("This is the VodaMed backend");
 });
 
 app.use(express.json());
 app.use(bodyParser.json());
 
-// app.post("/api/chatgpt", verifyToken, async (req, res) => {
-//   const { prompt } = req.body;
-//   try {
-//     const response = await getChatGPTResponse(prompt);
-//     res.status(200).json({ response });
-//   } catch (error: any) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
 
 app.use("/api/gpt", gptRoute)
 app.use("/api/users", usersRoute);
