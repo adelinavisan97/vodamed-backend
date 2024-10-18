@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "moduleResolution": "node",
-    "target": "ESNext",
+    "target": "ES2020", // or your preferred target
+    "module": "ESNext", // or "CommonJS" if you prefer
+    "moduleResolution": "Node", // Change this line
+    "esModuleInterop": true, // Ensure this is set to true
     "outDir": "./dist",
-    "allowSyntheticDefaultImports": true
+    "rootDir": "./src",
+    "strict": true
   },
   "include": ["src/**/*"],
-  "exclude": ["../node_modules", "dist"]
+  "exclude": ["node_modules"]
 }
