@@ -1,14 +1,16 @@
 import express from "express";
 import { UsersService } from "./users.service";
+import { AuthenticationService } from "../aws/authentication.service";
 
 const router = express.Router();
 const userService = new UsersService();
+const authenticaionService =  new AuthenticationService();
 
 router.post("/signup", async (req, res) => {
   const user = req.body;
   try {
     // Sign up the user with Cognito
-    const cognitoResponse = await signUp(user);
+    const cognitoResponse = await authenticaionService.signUp(user);
     console.log("Cognito signup response:", cognitoResponse);
 
     // Save the user to MongoDB
@@ -24,7 +26,7 @@ router.post("/signup", async (req, res) => {
 router.post("/confirm", async (req, res) => {
   const { email, code } = req.body;
   try {
-    const response = await confirmSignUp(email, code);
+    const response = await authenticaionService.confirmSignUp(email, code);
     res.status(200).json(response);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -34,7 +36,7 @@ router.post("/confirm", async (req, res) => {
 router.post("/signin", async (req, res) => {
   const { email, password } = req.body;
   try {
-    const response = await signIn(email, password);
+    const response = await authenticaionService.signIn(email, password);
     res.status(200).json(response);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
