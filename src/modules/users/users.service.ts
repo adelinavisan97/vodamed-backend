@@ -47,7 +47,6 @@ export class UsersService {
   public getUser = async (
     userEmail: string
   ): Promise<UserModel | undefined> => {
-    const innerFunctionName = "userService.getUser";
     // Validation
     if (!userEmail) {
       throw new Error("userEmail");
@@ -61,7 +60,7 @@ export class UsersService {
       const errorMessage = `Failed to fetch user details. ${e}`;
       console.error({
         message: errorMessage,
-        innerFunctionName,
+        location: "userService.getUser",
       });
       throw e;
     }

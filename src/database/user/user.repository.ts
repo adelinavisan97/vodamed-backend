@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { UserModel } from "../../modules/users/models/user.interface";
-import { UserDbModel } from "./user.interface";
+import { UserDbModel } from "./userDb.interface";
 import { getDb } from "../connection";
 import { config } from "../../config";
 
@@ -81,7 +81,6 @@ export class UserRepository {
   public getUser = async (
     userEmail: string
   ): Promise<UserModel | undefined> => {
-    const innerFunctionName = "userRepository.getUser";
     try {
       if (!userEmail) throw new Error("User email is missing.");
       const mongoClient = getDb();
@@ -93,7 +92,7 @@ export class UserRepository {
       const errorMessage = `Failed to fetch user - database error. ${e}`;
       console.error({
         message: errorMessage,
-        innerFunctionName,
+        location: "userRepository.getUser",
       });
       throw new Error();
     }

@@ -20,10 +20,8 @@ app.use(
   })
 );
 
-
 app.use(express.json());
 app.use(bodyParser.json());
-
 
 app.use("/api/gpt", gptRoute)
 app.use("/api/users", usersRoute);
