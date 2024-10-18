@@ -1,7 +1,7 @@
 import express from "express";
 import { UsersService } from "./users.service";
 import { AuthenticationService } from "../aws/authentication.service";
-import { VerifyMiddleware } from "./middleware/verfiy.middelware";
+import { VerifyMiddleware } from "../../shared/middleware/verfiy.middelware";
 
 const router = express.Router();
 const userService = new UsersService();

@@ -7,6 +7,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { connectToDatabase } from "./database/connection";
 import usersRoute from "./modules/users/users.route";
+import gptRoute from "./modules/gpt/gpt.route"
 
 const app = express();
 
