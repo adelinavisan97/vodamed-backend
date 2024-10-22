@@ -8,14 +8,13 @@ export class UserRepository {
   constructor() {}
 
   public addUser = async (user: UserModel): Promise<UserModel> => {
-    const innerFunctionName = "userRepository.addUser";
     try {
       this.validateUser(user);
     } catch (e) {
       const errorMessage = `Failed to add user - data validation failed. ${e}`;
       console.error({
         message: errorMessage,
-        innerFunctionName,
+        location: "userRepository.addUser",
       });
       throw e;
     }
@@ -40,7 +39,7 @@ export class UserRepository {
       const errorMessage = `Failed to add user - database error. ${e}`;
       console.error({
         message: errorMessage,
-        innerFunctionName,
+        location: "userRepository.addUser",
       });
       throw new Error();
     }
