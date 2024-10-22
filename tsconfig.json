@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // or your preferred target
+    "module": "ESNext", // or "CommonJS" if you prefer
+    "moduleResolution": "Node", // Change this line
+    "esModuleInterop": true, // Ensure this is set to true
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
