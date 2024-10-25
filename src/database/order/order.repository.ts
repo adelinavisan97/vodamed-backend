@@ -21,7 +21,7 @@ export class OrderRepository{
             }
             const mongoClient = getDb();
             await mongoClient.collection<OrderDbModel>(config.OrderCollectionName).insertOne(orderDb);
-            return 'Success'
+            return "Success"
         } catch (error) {
             console.error({
                 message: "Failed to add the order to the collection",
@@ -31,7 +31,21 @@ export class OrderRepository{
         }
     }
 
-    async getUserOrders(userEmail: string){
+    private toOderModel(orders: OrderDbModel[]): OrderModel[]{
+        const newOrders: OrderModel[] = orders.map(order => ({
+            user: order.user,
+            orderItems: order.orderItems,
+            totalAmount: order.totalAmount,
+            orderDate: order.orderDate,
+            shippingAddress: order.shippingAddress,
+            paymentMethod: order.paymentMethod,
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt,
+        }));
+        return newOrders;
+    }
+
+    async getUserOrders(userEmail: string): Promise<OrderModel[] | undefined>{
         const userId = await this.userRepository.getUserId(userEmail)
         try{
             const mongoClient = getDb();
@@ -39,7 +53,12 @@ export class OrderRepository{
                 .collection<OrderDbModel>(config.OrderCollectionName)
                 .find({user: userId})
                 .toArray()
-            return userOrders;
+            if (userOrders){
+                return this.toOderModel(userOrders);
+            }else{
+                console.log("No orders found for "+userEmail)
+                return undefined
+            }
         }catch (error){
             console.error({
                 message: "Error fetching user orders",
