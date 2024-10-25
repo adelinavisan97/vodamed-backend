@@ -8,7 +8,6 @@ export class OrderRepository{
     constructor(private userRepository = new UserRepository()){}
 
     async insertOrder(order: OrderModel): Promise<string>{
-        try{
             const orderDb: OrderDbModel = {
                 user: order.user,
                 orderItems: order.orderItems,
@@ -19,6 +18,7 @@ export class OrderRepository{
                 createdAt: order.createdAt,
                 updatedAt: order.updatedAt, //might want to generate these here instead
             }
+        try{
             const mongoClient = getDb();
             await mongoClient.collection<OrderDbModel>(config.OrderCollectionName).insertOne(orderDb);
             return "Success"
@@ -46,7 +46,7 @@ export class OrderRepository{
     }
 
     async getUserOrders(userEmail: string): Promise<OrderModel[] | undefined>{
-        const userId = await this.userRepository.getUserId(userEmail)
+        const userId = await this.userRepository.getUserId(userEmail) //can probably move this to the service and just pass the id
         try{
             const mongoClient = getDb();
             const userOrders: OrderDbModel[] = await mongoClient
@@ -64,6 +64,7 @@ export class OrderRepository{
                 message: "Error fetching user orders",
                 location: "orderRepository.getUserOrders"
             })
+            throw new Error()
         }   
     }
 }

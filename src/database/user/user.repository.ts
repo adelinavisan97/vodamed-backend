@@ -86,7 +86,7 @@ export class UserRepository {
       const result = (await mongoClient
         .collection(config.UserCollectionName)
         .findOne({ email: userEmail })) as unknown as UserDbModel;
-      return result ? this.toUserModel(result) : undefined;
+      return result ? this.toUserModel(result) : undefined; //might actually want to return as the dbmodel so they can have the id on the frontend
     } catch (e: any) {
       const errorMessage = `Failed to fetch user - database error. ${e}`;
       console.error({
@@ -116,4 +116,6 @@ export class UserRepository {
       })
     }
   }
+
+  //Probably going to need a function to get all users for doctors assigning prescriptions
 }

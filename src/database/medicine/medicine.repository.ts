@@ -8,8 +8,7 @@ export class MedicineRepository {
 
     //Could just do this manually not sure we need to add from the web app
     async insertMedicine(medicine: MedicineModel): Promise<string>{
-        try{
-            const medicineDb: MedicineDbModel = {
+             const medicineDb: MedicineDbModel = {
                 name: medicine.name,
                 description: medicine.description,
                 dosage: medicine.dosage,
@@ -21,6 +20,7 @@ export class MedicineRepository {
                 createdAt: medicine.createdAt, //Might want to do this here
                 updatedAt: medicine.updatedAt
             }
+        try{
             const mongoClient = getDb();
             await mongoClient.collection<MedicineDbModel>(config.MedicineCollectionName).insertOne(medicineDb);
             return "Success"
