@@ -1,16 +1,15 @@
 import { ObjectId } from "mongodb";
 
-export interface OrderDbItem {
+export interface OrderItem {
     medicine: ObjectId;
     quantity: number;
     price: number;
     total: number;
 }
 
-export interface OrderDbModel {
-    _id?: ObjectId;
+export interface OrderModel {
     user: ObjectId;
-    orderItems: OrderDbItem[]; // Array of items in the order
+    orderItems: OrderItem[]; // Array of items in the order
     totalAmount: number;
     orderDate: Date;
     shippingAddress: string;

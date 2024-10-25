@@ -96,4 +96,24 @@ export class UserRepository {
       throw new Error();
     }
   };
+
+  async getUserId(userEmail: string): Promise<ObjectId | undefined>{
+    try{
+      if (!userEmail) throw new Error("User email is missing.");
+      const mongoClient = getDb();
+      const result = (await mongoClient
+        .collection(config.UserCollectionName)
+        .findOne({ email: userEmail }));
+      if(result){
+        return result._id
+      }else{
+        console.log("User with email "+userEmail+" not found!")
+      }
+    }catch (error){
+      console.error({
+        message: "Error fecthing user ID",
+        location: "userRepository.getUserId"
+      })
+    }
+  }
 }

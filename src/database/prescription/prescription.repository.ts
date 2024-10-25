@@ -3,7 +3,7 @@ export class PrescriptionRepository {
     }
 
     async insertPrescription(){
-
+        
     }
 
     async getPrescription(){

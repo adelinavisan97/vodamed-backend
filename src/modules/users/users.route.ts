@@ -8,6 +8,7 @@ const userService = new UsersService();
 const authenticaionService =  new AuthenticationService();
 const verifyMiddleware = new VerifyMiddleware();
 
+//Might want to rework to have an admin and standard user routes
 router.post("/signup", async (req, res) => {
   const user = req.body;
   try {
