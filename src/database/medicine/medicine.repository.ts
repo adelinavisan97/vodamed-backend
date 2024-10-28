@@ -17,12 +17,13 @@ export class MedicineRepository {
                 stock: medicine.stock,
                 type: medicine.type,
                 image: medicine.image,
-                createdAt: medicine.createdAt, //Might want to do this here
-                updatedAt: medicine.updatedAt
+                createdAt: new Date(),
+                updatedAt: new Date(),
             }
         try{
             const mongoClient = getDb();
             await mongoClient.collection<MedicineDbModel>(config.MedicineCollectionName).insertOne(medicineDb);
+            console.log("Here")
             return "Success"
         }catch(error){
             console.error({

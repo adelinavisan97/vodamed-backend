@@ -26,6 +26,9 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+//Might be nice to add validation so JSON objects are vaildated when provided against the required schema
+//As otherwise types are not enforced at runtime leading to potentially dodgy inserts
+//Can use 'joi' library for this apparently 
 router.post("/confirm", async (req, res) => {
   const { email, code } = req.body;
   try {
@@ -62,5 +65,11 @@ router.get("/info", verifyMiddleware.verifyToken, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// router.get("/test", async (req, res) =>{
+//   console.log(req.body)
+//   const test = await prescriptionRepository.getUserPrescriptions(req.body.userEmail)
+//   return res.status(200).json(test);
+// })
 
 export default router;

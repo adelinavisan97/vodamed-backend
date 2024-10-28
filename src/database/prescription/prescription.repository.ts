@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { UserRepository } from './../user/user.repository';
 import { PerscriptionModel } from "../../modules/users/models/perscription.interface";
 import { getDb } from '../connection';
@@ -10,14 +11,18 @@ export class PrescriptionRepository {
 
     //Using user email as I saw it was the identifier in the original code, but we can swap to id if needed
     async insertPrescription(prescription: PerscriptionModel): Promise<string>{ //might need to pass emails in here for fetching or fetch from service
+        //Could add a check to make sure the provided doctor ID is actually a doctor
         const prescriptionDb: PerscriptionDbModel = {
-            patient: prescription.patient, //might need editing if we are passing emails instead, will need to fecth userId from email
-            doctor: prescription.doctor, //only doctors will be inserting, but might also be passed in as an email so will want to fetch an ID
-            medicines: prescription.medicines,
+            patient: new ObjectId(prescription.patient), //might need editing if we are passing emails instead, will need to fecth userId from email
+            doctor: new ObjectId(prescription.doctor), //only doctors will be inserting, but might also be passed in as an email so will want to fetch an ID
+            medicines: prescription.medicines.map(item => ({
+                ...item,
+                medicine: new ObjectId(item.medicine)
+            })), //Might need to change this to convert the object ID stored inside
             prescriptionDate: prescription.prescriptionDate,
             notes: prescription.notes,
-            createdAt: prescription.createdAt, //as before might want to set this in the backend rather than passing it
-            updatedAt: prescription.updatedAt,
+            createdAt: new Date(), //as before might want to set this in the backend rather than passing it
+            updatedAt: new Date(),
         }
         try{
             const mongoClient = getDb();

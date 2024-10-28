@@ -103,7 +103,7 @@ export class UserRepository {
       const mongoClient = getDb();
       const result = (await mongoClient
         .collection(config.UserCollectionName)
-        .findOne({ email: userEmail }));
+        .findOne({ _email: userEmail }));
       if(result){
         return result._id
       }else{

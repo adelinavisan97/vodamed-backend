@@ -8,12 +8,12 @@ export interface OrderItem {
 }
 
 export interface OrderModel {
-    user: ObjectId;
+    user: ObjectId; //Might need to be string instead
     orderItems: OrderItem[]; // Array of items in the order
     totalAmount: number;
     orderDate: Date;
     shippingAddress: string;
     paymentMethod: 'credit-card' | 'paypal' | 'bank-transfer';
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt?: Date; //Optional as we don't requrie this from the frontend but we can return it
+    updatedAt?: Date;
 }

@@ -7,6 +7,4 @@ export interface MedicineModel {
     stock: number;
     type: 'prescription' | 'over-the-counter'; // If it is prescription it cannot be bought
     image?: string; //Base 64 string, might need to think a bit more about this, can be stored as URL
-    createdAt: Date; //might be able to remove
-    updatedAt: Date;
 }

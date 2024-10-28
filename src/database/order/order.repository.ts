@@ -3,20 +3,21 @@ import { config } from "../../config";
 import { OrderModel } from "../../modules/users/models/order.interace";
 import { getDb } from "../connection"
 import { OrderDbModel } from "./orderDb.interface";
+import { ObjectId } from 'mongodb';
 
 export class OrderRepository{
     constructor(private userRepository = new UserRepository()){}
 
     async insertOrder(order: OrderModel): Promise<string>{
             const orderDb: OrderDbModel = {
-                user: order.user,
+                user: new ObjectId(order.user),
                 orderItems: order.orderItems,
                 totalAmount: order.totalAmount,
                 orderDate: order.orderDate,
                 shippingAddress: order.shippingAddress,
                 paymentMethod: order.paymentMethod,
-                createdAt: order.createdAt,
-                updatedAt: order.updatedAt, //might want to generate these here instead
+                createdAt: new Date(),
+                updatedAt: new Date()
             }
         try{
             const mongoClient = getDb();
