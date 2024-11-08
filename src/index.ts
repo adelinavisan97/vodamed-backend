@@ -11,7 +11,7 @@ import gptRoute from "./modules/gpt/gpt.route";
 
 const app = express();
 
-// Middleware for handling CORS policy
+//Middleware for handling CORS policy
 app.use(
     cors({
         origin: "http://localhost:5173",

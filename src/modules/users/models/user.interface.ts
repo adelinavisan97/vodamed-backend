@@ -1,3 +1,4 @@
+//Want to return all so Frontend can send IDs
 export interface UserModel {
   email: string;
   givenName: string;
