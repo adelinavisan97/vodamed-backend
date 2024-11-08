@@ -8,14 +8,13 @@ export class UserRepository {
   constructor() {}
 
   public addUser = async (user: UserModel): Promise<UserModel> => {
-    const innerFunctionName = "userRepository.addUser";
     try {
       this.validateUser(user);
     } catch (e) {
       const errorMessage = `Failed to add user - data validation failed. ${e}`;
       console.error({
         message: errorMessage,
-        innerFunctionName,
+        location: "userRepository.addUser",
       });
       throw e;
     }
@@ -40,7 +39,7 @@ export class UserRepository {
       const errorMessage = `Failed to add user - database error. ${e}`;
       console.error({
         message: errorMessage,
-        innerFunctionName,
+        location: "userRepository.addUser",
       });
       throw new Error();
     }
@@ -87,7 +86,7 @@ export class UserRepository {
       const result = (await mongoClient
         .collection(config.UserCollectionName)
         .findOne({ email: userEmail })) as unknown as UserDbModel;
-      return result ? this.toUserModel(result) : undefined;
+      return result ? this.toUserModel(result) : undefined; //might actually want to return as the dbmodel so they can have the id on the frontend
     } catch (e: any) {
       const errorMessage = `Failed to fetch user - database error. ${e}`;
       console.error({
@@ -97,4 +96,26 @@ export class UserRepository {
       throw new Error();
     }
   };
+
+  async getUserId(userEmail: string): Promise<ObjectId | undefined>{
+    try{
+      if (!userEmail) throw new Error("User email is missing.");
+      const mongoClient = getDb();
+      const result = (await mongoClient
+        .collection(config.UserCollectionName)
+        .findOne({ _email: userEmail }));
+      if(result){
+        return result._id
+      }else{
+        console.log("User with email "+userEmail+" not found!")
+      }
+    }catch (error){
+      console.error({
+        message: "Error fecthing user ID",
+        location: "userRepository.getUserId"
+      })
+    }
+  }
+
+  //Probably going to need a function to get all users for doctors assigning prescriptions
 }
