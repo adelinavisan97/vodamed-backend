@@ -66,6 +66,41 @@ router.get("/info", verifyMiddleware.verifyToken, async (req, res) => {
   }
 });
 
+//Can also pass userId in the request body but I prefer it here
+router.post("/:userId/createPrescription", verifyMiddleware.verifyToken, async (req, res) => {
+  try {
+    
+  } catch (error: any) {
+    res.status(500).json({error: error.message})
+  }
+})
+
+router.get("/:userId/getPrescriptions", verifyMiddleware.verifyToken, async (req, res) => {
+  try {
+    
+  } catch (error: any) {
+    res.status(500).json({error: error.message})
+  }
+})
+
+router.post(":/userId/createOrder", verifyMiddleware.verifyToken, async (req, res) => {
+  try {
+    
+  } catch (error: any) {
+    res.status(500).json({error: error.message})
+  }
+})
+
+router.get("/:userId/getOrders", verifyMiddleware.verifyToken, async (req, res) => {
+  try {
+    
+  } catch (error: any) {
+    res.status(500).json({error: error.message})
+  }
+})
+
+
+
 // router.get("/test", async (req, res) =>{
 //   console.log(req.body)
 //   const test = await prescriptionRepository.getUserPrescriptions(req.body.userEmail)

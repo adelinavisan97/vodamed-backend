@@ -8,6 +8,7 @@ import bodyParser from "body-parser";
 import { connectToDatabase } from "./database/connection";
 import usersRoute from "./modules/users/users.route";
 import gptRoute from "./modules/gpt/gpt.route";
+import medicineRoute from "./modules/medicine/medicine.route";
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 
 app.use("/api/gpt", gptRoute);
 app.use("/api/users", usersRoute);
+app.use("/api/medicine", medicineRoute)
 
 connectToDatabase()
     .then(() => {
