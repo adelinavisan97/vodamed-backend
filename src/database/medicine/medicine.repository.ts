@@ -23,11 +23,10 @@ export class MedicineRepository {
         try{
             const mongoClient = getDb();
             await mongoClient.collection<MedicineDbModel>(config.MedicineCollectionName).insertOne(medicineDb);
-            console.log("Here")
-            return "Success"
+            return "Successfully inserted the medicine"
         }catch(error){
             console.error({
-                message: "Failed to add the medicine to the colleciton",
+                message: "Failed to add the medicine to the colleciton: " + JSON.stringify(error),
                 location: "medicineRepository.insertMedicine"
             })
             throw new Error()
@@ -35,23 +34,20 @@ export class MedicineRepository {
     }
 
 
-    async getAllMedicine(): Promise<MedicineDbModel[] | string | undefined>{ //want to return it as a db model so the frontend has the ids
+    async findAllMedicine(): Promise<MedicineDbModel[]>{ //want to return it as a db model so the frontend has the ids
         try{
             const mongoClient = getDb();
             const allMedicine = await mongoClient
                 .collection<MedicineDbModel>(config.MedicineCollectionName)
                 .find()
                 .toArray()
-            if(allMedicine){
-                return allMedicine
-            }else{
-                return "No medicine found in the collection"
-            }
+            return allMedicine || []
         }catch(error){
             console.error({
-                message: "Error fetching medicine",
+                message: "Error fetching medicine: " + JSON.stringify(error),
                 location: "medicineRepository.getAllMedicine"
             })
+            throw new Error(`Internal Server Error 500: Error fetching medicine`)
         }
 
     }

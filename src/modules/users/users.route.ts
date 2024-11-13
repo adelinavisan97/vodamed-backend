@@ -66,45 +66,52 @@ router.get("/info", verifyMiddleware.verifyToken, async (req, res) => {
   }
 });
 
-//Can also pass userId in the request body but I prefer it here
-router.post("/:userId/createPrescription", verifyMiddleware.verifyToken, async (req, res) => {
+//Can craete a prescription providing doctor and patient as same id
+//but cba to add validation for it and it shouldn't be a problem in practice
+router.post("/createPrescription", verifyMiddleware.verifyToken, async (req, res) => {
   try {
-    
+    const response = await userService.createPrescription(req.body)
+    res.status(200).json(response)
   } catch (error: any) {
     res.status(500).json({error: error.message})
   }
 })
 
-router.get("/:userId/getPrescriptions", verifyMiddleware.verifyToken, async (req, res) => {
+//I like to pass as part of the path but if others do not like it happy to change it
+//Maybe we can pass Id directly instead (which I prefer) but not actually sure what we return to the frontend
+//Had a look and I probably can but will take more effort than I have the energy for rn
+//TODO
+router.get("/:userEmail/getPrescriptions", verifyMiddleware.verifyToken, async (req, res) => {
   try {
-    
-  } catch (error: any) {
-    res.status(500).json({error: error.message})
-  }
-})
-
-router.post(":/userId/createOrder", verifyMiddleware.verifyToken, async (req, res) => {
-  try {
-    
-  } catch (error: any) {
-    res.status(500).json({error: error.message})
-  }
-})
-
-router.get("/:userId/getOrders", verifyMiddleware.verifyToken, async (req, res) => {
-  try {
-    
+      const userEmail = req.params.userEmail;
+      const response = await userService.getPrescriptions(userEmail)
+      res.status(200).json(response)
   } catch (error: any) {
     res.status(500).json({error: error.message})
   }
 })
 
 
+router.post("/createOrder", verifyMiddleware.verifyToken, async (req, res) => {
+  try {
+    const response = await userService.createOrder(req.body)
+    res.status(200).json(response)
+  } catch (error: any) {
+    res.status(500).json({error: error.message})
+  }
+})
 
-// router.get("/test", async (req, res) =>{
-//   console.log(req.body)
-//   const test = await prescriptionRepository.getUserPrescriptions(req.body.userEmail)
-//   return res.status(200).json(test);
-// })
+//Should get swapped out to ID
+//TODO
+router.get("/:userEmail/getOrders", verifyMiddleware.verifyToken, async (req, res) => {
+  try {
+    const userEmail = req.params.userEmail;
+    const response = await userService.getOrders(userEmail)
+    res.status(200).json(response)
+  } catch (error: any) {
+    res.status(500).json({error: error.message})
+  }
+})
+
 
 export default router;

@@ -10,13 +10,12 @@ export class UserRepository {
   public addUser = async (user: UserModel): Promise<UserModel> => {
     try {
       this.validateUser(user);
-    } catch (e) {
-      const errorMessage = `Failed to add user - data validation failed. ${e}`;
+    } catch (error) {
       console.error({
-        message: errorMessage,
+        message: "Failed to add user, data validation failed: " + JSON.stringify(error),
         location: "userRepository.addUser",
       });
-      throw e;
+      throw new Error("Internal Server Error 500: Failed to validate user data");
     }
     const userDb: UserDbModel = {
       _email: user.email,
@@ -35,13 +34,12 @@ export class UserRepository {
         .collection<Partial<UserDbModel>>(config.UserCollectionName)
         .insertOne(userDb);
       return user;
-    } catch (e: any) {
-      const errorMessage = `Failed to add user - database error. ${e}`;
+    } catch (error) {
       console.error({
-        message: errorMessage,
+        message: "Failed to add user to the database: " + JSON.stringify(error),
         location: "userRepository.addUser",
       });
-      throw new Error();
+      throw new Error("Internal Server Error 500: Failed to create user");
     }
   };
 
@@ -87,35 +85,34 @@ export class UserRepository {
         .collection(config.UserCollectionName)
         .findOne({ email: userEmail })) as unknown as UserDbModel;
       return result ? this.toUserModel(result) : undefined; //might actually want to return as the dbmodel so they can have the id on the frontend
-    } catch (e: any) {
-      const errorMessage = `Failed to fetch user - database error. ${e}`;
+    } catch (error) {
       console.error({
-        message: errorMessage,
+        message: "Failed to fetch user from the database: " + JSON.stringify(error),
         location: "userRepository.getUser",
       });
       throw new Error();
     }
   };
 
-  async getUserId(userEmail: string): Promise<ObjectId | undefined>{
-    try{
-      if (!userEmail) throw new Error("User email is missing.");
-      const mongoClient = getDb();
-      const result = (await mongoClient
-        .collection(config.UserCollectionName)
-        .findOne({ _email: userEmail }));
-      if(result){
-        return result._id
-      }else{
-        console.log("User with email "+userEmail+" not found!")
-      }
-    }catch (error){
-      console.error({
-        message: "Error fecthing user ID",
-        location: "userRepository.getUserId"
-      })
-    }
-  }
+  async getUserId(userEmail: string): Promise<ObjectId> {
+    try {
+        const mongoClient = getDb();
+        const result = await mongoClient
+            .collection(config.UserCollectionName)
+            .findOne({ _email: userEmail });
 
+        if (!result) {
+            throw new Error(`No user found with email: ${userEmail}`);
+        }
+
+        return result._id;
+    } catch (error) {
+        console.error({
+            message: "Error fetching user ID: " + (error as Error).message,
+            location: "userRepository.getUserId"
+        });
+        throw new Error("Internal Server Error: Unable to fetch user ID");
+    }
+}
   //Probably going to need a function to get all users for doctors assigning prescriptions
 }

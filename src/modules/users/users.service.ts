@@ -1,9 +1,19 @@
+import { OrderRepository } from "../../database/order/order.repository";
+import { OrderDbModel } from "../../database/order/orderDb.interface";
+import { PrescriptionRepository } from "../../database/prescription/prescription.repository";
+import { PerscriptionDbModel } from "../../database/prescription/prescriptionDb.interface";
 import { UserRepository } from "../../database/user/user.repository";
+import { OrderModel } from "./models/order.interace";
+import { PerscriptionModel } from "./models/perscription.interface";
 import { UserModel } from "./models/user.interface";
 
 
 export class UsersService {
-  constructor(private userRepository = new UserRepository()) {}
+  constructor(
+    private userRepository = new UserRepository(), 
+    private orderRepository = new OrderRepository(), 
+    private prescriptionRepository = new PrescriptionRepository()
+  ) {}
 
   public addUser = async (
     user: Partial<UserModel>,
@@ -67,4 +77,32 @@ export class UsersService {
 
     return user;
   };
+
+  //Probably going to need a function to get all user emails or something so doctors can assign perscriptions
+  //with a drop down etc.
+  //TODO
+
+  async createPrescription(prescription: PerscriptionModel): Promise<string> {
+    return await this.prescriptionRepository.insertPrescription(prescription)
+  }
+
+  //Probably going to change this straight to id but can't be bothered to figure out how to pass it to
+  //the frontend rn
+  //TODO
+  async getPrescriptions(userEmail: string): Promise<PerscriptionModel[]> {
+    const userId = await this.userRepository.getUserId(userEmail)
+    return await this.prescriptionRepository.getUserPrescriptions(userId)
+  }
+
+  async createOrder(order: OrderModel): Promise<string> {
+    return await this.orderRepository.insertOrder(order)
+  }
+
+  //Probably going to change this straight to id but can't be bothered to figure out how to pass it to
+  //the frontend rn
+  //TODO
+  async getOrders(userEmail: string): Promise<OrderModel[]> {
+    const userId = await this.userRepository.getUserId(userEmail)
+    return await this.orderRepository.getUserOrders(userId)
+  }
 }
