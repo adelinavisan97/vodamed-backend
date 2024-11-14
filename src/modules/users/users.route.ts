@@ -81,10 +81,10 @@ router.post("/createPrescription", verifyMiddleware.verifyToken, async (req, res
 //Maybe we can pass Id directly instead (which I prefer) but not actually sure what we return to the frontend
 //Had a look and I probably can but will take more effort than I have the energy for rn
 //TODO
-router.get("/:userEmail/getPrescriptions", verifyMiddleware.verifyToken, async (req, res) => {
+router.get("/:userId/getPrescriptions", verifyMiddleware.verifyToken, async (req, res) => {
   try {
-      const userEmail = req.params.userEmail;
-      const response = await userService.getPrescriptions(userEmail)
+      const userId = req.params.userId;
+      const response = await userService.getPrescriptions(userId)
       res.status(200).json(response)
   } catch (error: any) {
     res.status(500).json({error: error.message})
@@ -103,10 +103,10 @@ router.post("/createOrder", verifyMiddleware.verifyToken, async (req, res) => {
 
 //Should get swapped out to ID
 //TODO
-router.get("/:userEmail/getOrders", verifyMiddleware.verifyToken, async (req, res) => {
+router.get("/:userId/getOrders", verifyMiddleware.verifyToken, async (req, res) => {
   try {
-    const userEmail = req.params.userEmail;
-    const response = await userService.getOrders(userEmail)
+    const userId = req.params.userId;
+    const response = await userService.getOrders(userId)
     res.status(200).json(response)
   } catch (error: any) {
     res.status(500).json({error: error.message})

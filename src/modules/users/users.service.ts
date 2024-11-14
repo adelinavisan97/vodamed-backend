@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { OrderRepository } from "../../database/order/order.repository";
 import { OrderDbModel } from "../../database/order/orderDb.interface";
 import { PrescriptionRepository } from "../../database/prescription/prescription.repository";
@@ -86,23 +87,19 @@ export class UsersService {
     return await this.prescriptionRepository.insertPrescription(prescription)
   }
 
-  //Probably going to change this straight to id but can't be bothered to figure out how to pass it to
-  //the frontend rn
-  //TODO
-  async getPrescriptions(userEmail: string): Promise<PerscriptionModel[]> {
-    const userId = await this.userRepository.getUserId(userEmail)
-    return await this.prescriptionRepository.getUserPrescriptions(userId)
+
+  async getPrescriptions(userId: string): Promise<PerscriptionModel[]> {
+    //Will throw an error if userId is invalid but probably wont happen
+    return await this.prescriptionRepository.getUserPrescriptions(new ObjectId(userId))
   }
 
   async createOrder(order: OrderModel): Promise<string> {
     return await this.orderRepository.insertOrder(order)
   }
 
-  //Probably going to change this straight to id but can't be bothered to figure out how to pass it to
-  //the frontend rn
-  //TODO
-  async getOrders(userEmail: string): Promise<OrderModel[]> {
-    const userId = await this.userRepository.getUserId(userEmail)
-    return await this.orderRepository.getUserOrders(userId)
+
+  async getOrders(userId: string): Promise<OrderModel[]> {
+    //Will throw an error if userId is invalid but probably wont happen
+    return await this.orderRepository.getUserOrders(new ObjectId(userId))
   }
 }
