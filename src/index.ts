@@ -13,6 +13,7 @@ import medicineRoute from "./modules/medicine/medicine.route";
 const app = express();
 
 //Middleware for handling CORS policy
+//NOT SURE THIS IS WORKING ANYMORE
 app.use(
     cors({
         origin: ["http://localhost:5173", "https://adelinavisan97.github.io"],
