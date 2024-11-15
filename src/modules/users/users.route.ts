@@ -66,6 +66,16 @@ router.get("/info", verifyMiddleware.verifyToken, async (req, res) => {
   }
 });
 
+//Should modify the verify function or make a new one to ensure requester is an admin
+router.get("/getAllUserEmails", verifyMiddleware.verifyToken,  async (req, res) => {
+  try {
+    const response = await userService.getAllPatientEmails()
+    res.status(200).json(response)
+  } catch (error: any) {
+    res.status(500).json({error: error.message})
+  }
+})
+
 //Can craete a prescription providing doctor and patient as same id
 //but cba to add validation for it and it shouldn't be a problem in practice
 router.post("/createPrescription", verifyMiddleware.verifyToken, async (req, res) => {
@@ -91,7 +101,7 @@ router.get("/:userId/getPrescriptions", verifyMiddleware.verifyToken, async (req
   }
 })
 
-
+//Should probably check the provided medicine actually exists
 router.post("/createOrder", verifyMiddleware.verifyToken, async (req, res) => {
   try {
     const response = await userService.createOrder(req.body)
