@@ -12,9 +12,10 @@ import { cognitoClient, getSecretHash, clientId } from "./aws-config";
 import jwt from "jsonwebtoken";
 import { config } from "../../config";
 import { UserRequest } from "./models/userRequest.interface";
+import { UserRepository } from "../../database/user/user.repository";
 
 export class AuthenticationService {
-  constructor() {}
+  constructor(private userRepositroy = new UserRepository()) {}
 
   // Sign-up method
   public signUp = async (user: UserRequest) => {
@@ -104,6 +105,8 @@ export class AuthenticationService {
         throw new Error("Email not found in user attributes");
       }
 
+      const userId = await this.userRepositroy.getUserId(userEmail) 
+
       // Generate JWT
       const token = jwt.sign(
         { email: userEmail, sub: response.AuthenticationResult?.AccessToken },
@@ -111,7 +114,7 @@ export class AuthenticationService {
         { expiresIn: "1h" }
       );
 
-      return { ...response, token };
+      return { ...response, token, userId };
     } catch (error) {
       console.error("SignIn error:", error);
       throw error;

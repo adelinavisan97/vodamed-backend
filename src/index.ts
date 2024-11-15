@@ -8,10 +8,12 @@ import bodyParser from "body-parser";
 import { connectToDatabase } from "./database/connection";
 import usersRoute from "./modules/users/users.route";
 import gptRoute from "./modules/gpt/gpt.route";
+import medicineRoute from "./modules/medicine/medicine.route";
 
 const app = express();
 
 //Middleware for handling CORS policy
+//NOT SURE THIS IS WORKING ANYMORE
 app.use(
     cors({
         origin: ["http://localhost:5173", "https://adelinavisan97.github.io"],
@@ -25,6 +27,7 @@ app.use(bodyParser.json());
 
 app.use("/api/gpt", gptRoute);
 app.use("/api/users", usersRoute);
+app.use("/api/medicine", medicineRoute)
 
 connectToDatabase()
     .then(() => {

@@ -6,7 +6,7 @@ import { PerscriptionDbModel } from './prescriptionDb.interface';
 import { config } from '../../config';
 
 export class PrescriptionRepository {
-    constructor(private userRepository = new UserRepository()){
+    constructor(){
     }
 
     //Using user email as I saw it was the identifier in the original code, but we can swap to id if needed
@@ -29,7 +29,7 @@ export class PrescriptionRepository {
             await mongoClient
                 .collection<PerscriptionDbModel>(config.PrescriptionCollectionName)
                 .insertOne(prescriptionDb)
-            return "Success"
+            return "Successfully inserted the user's perscription"
         }catch(error){
             console.error({
                 message: "Failed to create prescription record",
@@ -53,25 +53,23 @@ export class PrescriptionRepository {
         return newPrescriptions
     }
 
-    async getUserPrescriptions(userEmail: string): Promise<PerscriptionModel[] | undefined>{
-        const userId = await this.userRepository.getUserId(userEmail) //Can probably extract to the service and pass an id
+    //Can be changed to id maybe
+    async getUserPrescriptions(userId: ObjectId): Promise<PerscriptionModel[]>{
         try{
             const mongoClient = getDb();
             const userPrescriptions: PerscriptionDbModel[] = await mongoClient
                 .collection<PerscriptionDbModel>(config.PrescriptionCollectionName)
                 .find({patient: userId})
                 .toArray()
-            if(userPrescriptions){
-                return this.toPrescriptionModel(userPrescriptions)
-            }else{
-                console.log("No prescriptions found for user")
-                return undefined
-            }
+            
+            return this.toPrescriptionModel(userPrescriptions) || []
+          
         }catch (error) {
             console.error({
-                message: "Error fetching user prescriptions",
+                message: "Error fetching user prescriptions" + JSON.stringify(error),
                 location: "prescriptionRepository.getUserPrescriptions"
             })
+            throw new Error("Internal Server Error 500: Error fetching prescriptions")
         }   
     }
 }
