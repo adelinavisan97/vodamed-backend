@@ -115,4 +115,20 @@ export class UserRepository {
     }
 }
   //Probably going to need a function to get all users for doctors assigning prescriptions
+  async getAllPatients(): Promise<string[]> {
+    try {
+        const mongoClient = getDb();
+        const result = await mongoClient
+            .collection(config.UserCollectionName)
+            .find({ isAdmin: false})
+            .toArray()
+        return result.map((user) => user._email)
+    } catch (error) {
+      console.error({
+            message: "Error fetching patients: " + (error as Error).message,
+            location: "userRepository.getAllPatients"
+        });
+        throw new Error("Internal Server Error: Unable to fetch patients");
+    }
+  }
 }

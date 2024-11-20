@@ -66,8 +66,20 @@ router.get("/info", verifyMiddleware.verifyToken, async (req, res) => {
   }
 });
 
-//Can craete a prescription providing doctor and patient as same id
+//Should modify the verify function or make a new one to ensure requester is an admin
+//This endpoint will return the emails of all users who are not admins (patients)
+router.get("/getAllPatientEmails", verifyMiddleware.verifyToken,  async (req, res) => {
+  try {
+    const response = await userService.getAllPatientEmails()
+    res.status(200).json(response)
+  } catch (error: any) {
+    res.status(500).json({error: error.message})
+  }
+})
+
+//Can create a prescription providing doctor and patient as same id
 //but cba to add validation for it and it shouldn't be a problem in practice
+//This endpoint will create a prescription in the database using the provided body
 router.post("/createPrescription", verifyMiddleware.verifyToken, async (req, res) => {
   try {
     const response = await userService.createPrescription(req.body)
@@ -78,9 +90,7 @@ router.post("/createPrescription", verifyMiddleware.verifyToken, async (req, res
 })
 
 //I like to pass as part of the path but if others do not like it happy to change it
-//Maybe we can pass Id directly instead (which I prefer) but not actually sure what we return to the frontend
-//Had a look and I probably can but will take more effort than I have the energy for rn
-//TODO
+//This endpoint will get all prescriptions for a specific user and return them as an array
 router.get("/:userId/getPrescriptions", verifyMiddleware.verifyToken, async (req, res) => {
   try {
       const userId = req.params.userId;
@@ -91,7 +101,8 @@ router.get("/:userId/getPrescriptions", verifyMiddleware.verifyToken, async (req
   }
 })
 
-
+//Should probably check the provided medicine actually exists
+//This endpoint will create an order in the database using the provided body
 router.post("/createOrder", verifyMiddleware.verifyToken, async (req, res) => {
   try {
     const response = await userService.createOrder(req.body)
@@ -101,8 +112,7 @@ router.post("/createOrder", verifyMiddleware.verifyToken, async (req, res) => {
   }
 })
 
-//Should get swapped out to ID
-//TODO
+//This endpoint will return all of a provided users orders as an array
 router.get("/:userId/getOrders", verifyMiddleware.verifyToken, async (req, res) => {
   try {
     const userId = req.params.userId;

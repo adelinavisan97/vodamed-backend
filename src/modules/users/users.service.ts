@@ -79,9 +79,12 @@ export class UsersService {
     return user;
   };
 
-  //Probably going to need a function to get all user emails or something so doctors can assign perscriptions
-  //with a drop down etc.
-  //TODO
+
+  //Function to get an array of all patient emails, to be used when a doctor is assigning a 
+  //perscription
+  async getAllPatientEmails(): Promise<string[]> {
+    return await this.userRepository.getAllPatients()
+  }
 
   async createPrescription(prescription: PerscriptionModel): Promise<string> {
     return await this.prescriptionRepository.insertPrescription(prescription)
