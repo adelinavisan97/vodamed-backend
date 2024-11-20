@@ -4,6 +4,11 @@ import { UserDbModel } from "./userDb.interface";
 import { getDb } from "../connection";
 import { config } from "../../config";
 
+
+interface UserInfo {
+  userId: string,
+  isDoctor: boolean
+}
 export class UserRepository {
   constructor() {}
 
@@ -94,18 +99,22 @@ export class UserRepository {
     }
   };
 
-  async getUserId(userEmail: string): Promise<ObjectId> {
+  async getUserInfo(userEmail: string): Promise<UserInfo> {
     try {
         const mongoClient = getDb();
         const result = await mongoClient
-            .collection(config.UserCollectionName)
+            .collection<UserDbModel>(config.UserCollectionName)
             .findOne({ _email: userEmail });
 
         if (!result) {
             throw new Error(`No user found with email: ${userEmail}`);
         }
 
-        return result._id;
+        return {
+          userId: result._id.toString(),
+          isDoctor: result.isAdmin,
+        }
+
     } catch (error) {
         console.error({
             message: "Error fetching user ID: " + (error as Error).message,

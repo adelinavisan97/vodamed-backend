@@ -105,16 +105,18 @@ export class AuthenticationService {
         throw new Error("Email not found in user attributes");
       }
 
-      const userId = await this.userRepositroy.getUserId(userEmail) 
+      const userInfo = await this.userRepositroy.getUserInfo(userEmail)
+      const {userId, isDoctor} = userInfo;
+
 
       // Generate JWT
       const token = jwt.sign(
-        { email: userEmail, sub: response.AuthenticationResult?.AccessToken },
+        { email: userEmail, sub: response.AuthenticationResult?.AccessToken, isDoctor: isDoctor},
         config.JwtSecret,
         { expiresIn: "1h" }
       );
 
-      return { ...response, token, userId };
+      return { ...response, token, userId, isDoctor };
     } catch (error) {
       console.error("SignIn error:", error);
       throw error;

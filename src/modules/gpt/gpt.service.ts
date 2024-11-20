@@ -17,7 +17,6 @@ export class GptService {
         messages: [{ role: "user", content: prompt }],
       });
       const fullResponse = response.choices[0].message.content;
-      console.log(fullResponse);
       return fullResponse;
 
       // const startIndex = fullResponse!.indexOf("1.");

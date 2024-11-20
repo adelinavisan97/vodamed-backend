@@ -2,6 +2,7 @@ import express from "express";
 import { UsersService } from "./users.service";
 import { AuthenticationService } from "../aws/authentication.service";
 import { VerifyMiddleware } from "../../shared/middleware/verfiy.middelware";
+import { checkIfDoctor } from "../../shared/middleware/checkDoctor.middleware";
 
 const router = express.Router();
 const userService = new UsersService();
@@ -54,7 +55,6 @@ router.post("/logout", verifyMiddleware.verifyToken, verifyMiddleware.logout);
 router.get("/info", verifyMiddleware.verifyToken, async (req, res) => {
   try {
     const userEmail = (req as any).user.email;
-    console.log(userEmail);
     const user = await userService.getUser(userEmail);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -80,7 +80,7 @@ router.get("/getAllPatientEmails", verifyMiddleware.verifyToken,  async (req, re
 //Can create a prescription providing doctor and patient as same id
 //but cba to add validation for it and it shouldn't be a problem in practice
 //This endpoint will create a prescription in the database using the provided body
-router.post("/createPrescription", verifyMiddleware.verifyToken, async (req, res) => {
+router.post("/createPrescription", verifyMiddleware.verifyToken, checkIfDoctor, async (req, res) => {
   try {
     const response = await userService.createPrescription(req.body)
     res.status(200).json(response)
