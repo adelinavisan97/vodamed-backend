@@ -70,7 +70,7 @@ router.get('/info', verifyMiddleware.verifyToken, async (req, res) => {
 router.get(
   '/getAllPatientInfo',
   verifyMiddleware.verifyToken,
-  //checkIfDoctor,
+  checkIfDoctor,
   async (req, res) => {
     try {
       const response = await userService.getAllPatientInfo();
@@ -87,7 +87,7 @@ router.get(
 router.post(
   '/createPrescription',
   verifyMiddleware.verifyToken,
-  //checkIfDoctor,
+  checkIfDoctor,
   async (req, res) => {
     try {
       const response = await userService.createPrescription(req.body);
