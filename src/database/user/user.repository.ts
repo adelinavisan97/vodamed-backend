@@ -124,14 +124,25 @@ export class UserRepository {
     }
 }
   //Probably going to need a function to get all users for doctors assigning prescriptions
-  async getAllPatients(): Promise<string[]> {
+  async getAllPatients(): Promise<object[]> {
     try {
-        const mongoClient = getDb();
-        const result = await mongoClient
-            .collection(config.UserCollectionName)
-            .find({ isAdmin: false})
-            .toArray()
-        return result.map((user) => user._email)
+      const mongoClient = getDb();
+      const result = await mongoClient
+        .collection(config.UserCollectionName)
+        .find({ isAdmin: false })
+        .toArray();
+
+      // Ensure result is an array
+      if (!Array.isArray(result)) {
+        throw new Error('Result is not an array');
+      }
+
+      const formattedDetails = result.reduce<{ id: any; email: any }[]>((acc, current) => {
+        // Push the object with `id` and `email` properties into the accumulator
+        acc.push({ id: current._id.toString(), email: current._email });
+        return acc;
+      }, []);  // Initializing as an empty array
+    return formattedDetails;
     } catch (error) {
       console.error({
             message: "Error fetching patients: " + (error as Error).message,

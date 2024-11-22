@@ -11,6 +11,7 @@ export interface PerscriptionModel {
     }[];
     prescriptionDate: Date; //Not sure this will be interpreted as Date
     notes?: string;
+    emailNotification?: boolean;
     createdAt?: Date; //Optional as we don't requrie this from the frontend but we can return it
     updatedAt?: Date;
 }
