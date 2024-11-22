@@ -82,7 +82,7 @@ export class UsersService {
 
   //Function to get an array of all patient emails, to be used when a doctor is assigning a 
   //perscription
-  async getAllPatientEmails(): Promise<string[]> {
+  async getAllPatientInfo(): Promise<object> {
     return await this.userRepository.getAllPatients()
   }
 

@@ -7,12 +7,12 @@ import {
   InitiateAuthCommandInput,
   AuthFlowType,
   GetUserCommand,
-} from "@aws-sdk/client-cognito-identity-provider";
-import { cognitoClient, getSecretHash, clientId } from "./aws-config";
-import jwt from "jsonwebtoken";
-import { config } from "../../config";
-import { UserRequest } from "./models/userRequest.interface";
-import { UserRepository } from "../../database/user/user.repository";
+} from '@aws-sdk/client-cognito-identity-provider';
+import { cognitoClient, getSecretHash, clientId } from './aws-config';
+import jwt from 'jsonwebtoken';
+import { config } from '../../config';
+import { UserRequest } from './models/userRequest.interface';
+import { UserRepository } from '../../database/user/user.repository';
 
 export class AuthenticationService {
   constructor(private userRepositroy = new UserRepository()) {}
@@ -26,11 +26,11 @@ export class AuthenticationService {
       Password: user.password,
       UserAttributes: [
         {
-          Name: "given_name",
+          Name: 'given_name',
           Value: user.givenName,
         },
         {
-          Name: "family_name",
+          Name: 'family_name',
           Value: user.familyName,
         },
       ],
@@ -40,10 +40,10 @@ export class AuthenticationService {
     try {
       const command = new SignUpCommand(params);
       const response = await cognitoClient.send(command);
-      console.log("SignUp success");
+      console.log('SignUp success');
       return response;
     } catch (error) {
-      console.error("SignUp error:", error);
+      console.error('SignUp error:', error);
       throw error;
     }
   };
@@ -62,10 +62,10 @@ export class AuthenticationService {
     try {
       const command = new ConfirmSignUpCommand(params);
       const response = await cognitoClient.send(command);
-      console.log("ConfirmSignUp success");
+      console.log('ConfirmSignUp success');
       return response;
     } catch (error) {
-      console.error("ConfirmSignUp error:", error);
+      console.error('ConfirmSignUp error:', error);
       throw error;
     }
   };
@@ -86,37 +86,42 @@ export class AuthenticationService {
     try {
       const command = new InitiateAuthCommand(params);
       const response = await cognitoClient.send(command);
-      console.log("SignIn success");
+      console.log('SignIn success');
 
       // Get access token from the response
       const accessToken = response.AuthenticationResult?.AccessToken;
       if (!accessToken) {
-        throw new Error("AccessToken not found in the response");
+        throw new Error('AccessToken not found in the response');
       }
 
       // Get user details using the access token
       const getUserCommand = new GetUserCommand({ AccessToken: accessToken });
       const userDetails = await cognitoClient.send(getUserCommand);
       const userEmail = userDetails.UserAttributes?.find(
-        (attr) => attr.Name === "email"
+        (attr) => attr.Name === 'email'
       )?.Value;
 
       if (!userEmail) {
-        throw new Error("Email not found in user attributes");
+        throw new Error('Email not found in user attributes');
       }
 
-      const userId = await this.userRepositroy.getUserId(userEmail) 
+      const userInfo = await this.userRepositroy.getUserInfo(userEmail);
+      const { userId, isDoctor } = userInfo;
 
       // Generate JWT
       const token = jwt.sign(
-        { email: userEmail, sub: response.AuthenticationResult?.AccessToken },
+        {
+          email: userEmail,
+          sub: response.AuthenticationResult?.AccessToken,
+          isDoctor: isDoctor,
+        },
         config.JwtSecret,
-        { expiresIn: "1h" }
+        { expiresIn: '1h' }
       );
 
-      return { ...response, token, userId };
+      return { ...response, token, userId, isDoctor };
     } catch (error) {
-      console.error("SignIn error:", error);
+      console.error('SignIn error:', error);
       throw error;
     }
   };
