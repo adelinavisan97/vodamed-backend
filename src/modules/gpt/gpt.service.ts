@@ -1,5 +1,5 @@
-import OpenAI from "openai";
-import { config } from "../../config";
+import OpenAI from 'openai';
+import { config } from '../../config';
 
 export class GptService {
   constructor() {}
@@ -13,8 +13,8 @@ export class GptService {
   public getChatGPTResponse = async (prompt: string) => {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: prompt }],
+        model: 'gpt-4o-mini',
+        messages: [{ role: 'user', content: prompt }],
       });
       const fullResponse = response.choices[0].message.content;
       return fullResponse;
@@ -26,7 +26,7 @@ export class GptService {
       //   .filter(Boolean);
       // return medsList;
     } catch (error) {
-      console.error("Error getting response from OpenAI:", error);
+      console.error('Error getting response from OpenAI:', error);
       throw error;
     }
   };

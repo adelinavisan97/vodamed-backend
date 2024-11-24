@@ -1,11 +1,8 @@
+//Feature was removed as part of the MVP
 export class AppointmentRepository {
-    constructor(){}
+  constructor() {}
 
-    async insertAppointment(){
+  async insertAppointment() {}
 
-    }
-
-    async getUserAppointment(){
-
-    }
+  async getUserAppointment() {}
 }

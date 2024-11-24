@@ -1,8 +1,8 @@
-import { CognitoIdentityProviderClient } from "@aws-sdk/client-cognito-identity-provider";
-import { fromCognitoIdentityPool } from "@aws-sdk/credential-provider-cognito-identity";
-import { CognitoIdentityClient } from "@aws-sdk/client-cognito-identity";
-import crypto from "crypto";
-import { config } from "../../config";
+import { CognitoIdentityProviderClient } from '@aws-sdk/client-cognito-identity-provider';
+import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
+import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
+import crypto from 'crypto';
+import { config } from '../../config';
 
 const REGION = config.Region;
 const clientId = config.ClientId;
@@ -19,13 +19,13 @@ const credentials = fromCognitoIdentityPool({
 const getSecretHash = (username: string) => {
   if (!clientSecret) {
     throw new Error(
-      "CLIENT_SECRET is not defined in the environment variables."
+      'CLIENT_SECRET is not defined in the environment variables.'
     );
   }
   return crypto
-    .createHmac("SHA256", clientSecret)
+    .createHmac('SHA256', clientSecret)
     .update(username + clientId)
-    .digest("base64");
+    .digest('base64');
 };
 
 export { cognitoClient, credentials, REGION, getSecretHash, clientId };
