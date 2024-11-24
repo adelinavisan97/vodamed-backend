@@ -4,20 +4,23 @@ import { UserDbModel } from "./userDb.interface";
 import { getDb } from "../connection";
 import { config } from "../../config";
 
+
+interface UserInfo {
+  userId: string,
+  isDoctor: boolean
+}
 export class UserRepository {
   constructor() {}
 
   public addUser = async (user: UserModel): Promise<UserModel> => {
-    const innerFunctionName = "userRepository.addUser";
     try {
       this.validateUser(user);
-    } catch (e) {
-      const errorMessage = `Failed to add user - data validation failed. ${e}`;
+    } catch (error) {
       console.error({
-        message: errorMessage,
-        innerFunctionName,
+        message: "Failed to add user, data validation failed: " + JSON.stringify(error),
+        location: "userRepository.addUser",
       });
-      throw e;
+      throw new Error("Internal Server Error 500: Failed to validate user data");
     }
     const userDb: UserDbModel = {
       _email: user.email,
@@ -36,13 +39,12 @@ export class UserRepository {
         .collection<Partial<UserDbModel>>(config.UserCollectionName)
         .insertOne(userDb);
       return user;
-    } catch (e: any) {
-      const errorMessage = `Failed to add user - database error. ${e}`;
+    } catch (error) {
       console.error({
-        message: errorMessage,
-        innerFunctionName,
+        message: "Failed to add user to the database: " + JSON.stringify(error),
+        location: "userRepository.addUser",
       });
-      throw new Error();
+      throw new Error("Internal Server Error 500: Failed to create user");
     }
   };
 
@@ -87,14 +89,66 @@ export class UserRepository {
       const result = (await mongoClient
         .collection(config.UserCollectionName)
         .findOne({ email: userEmail })) as unknown as UserDbModel;
-      return result ? this.toUserModel(result) : undefined;
-    } catch (e: any) {
-      const errorMessage = `Failed to fetch user - database error. ${e}`;
+      return result ? this.toUserModel(result) : undefined; //might actually want to return as the dbmodel so they can have the id on the frontend
+    } catch (error) {
       console.error({
-        message: errorMessage,
+        message: "Failed to fetch user from the database: " + JSON.stringify(error),
         location: "userRepository.getUser",
       });
       throw new Error();
     }
   };
+
+  async getUserInfo(userEmail: string): Promise<UserInfo> {
+    try {
+        const mongoClient = getDb();
+        const result = await mongoClient
+            .collection<UserDbModel>(config.UserCollectionName)
+            .findOne({ _email: userEmail });
+
+        if (!result) {
+            throw new Error(`No user found with email: ${userEmail}`);
+        }
+
+        return {
+          userId: result._id.toString(),
+          isDoctor: result.isAdmin,
+        }
+
+    } catch (error) {
+        console.error({
+            message: "Error fetching user ID: " + (error as Error).message,
+            location: "userRepository.getUserId"
+        });
+        throw new Error("Internal Server Error: Unable to fetch user ID");
+    }
+}
+  //Probably going to need a function to get all users for doctors assigning prescriptions
+  async getAllPatients(): Promise<object[]> {
+    try {
+      const mongoClient = getDb();
+      const result = await mongoClient
+        .collection(config.UserCollectionName)
+        .find({ isAdmin: false })
+        .toArray();
+
+      // Ensure result is an array
+      if (!Array.isArray(result)) {
+        throw new Error('Result is not an array');
+      }
+
+      const formattedDetails = result.reduce<{ id: any; email: any }[]>((acc, current) => {
+        // Push the object with `id` and `email` properties into the accumulator
+        acc.push({ id: current._id.toString(), email: current._email });
+        return acc;
+      }, []);  // Initializing as an empty array
+    return formattedDetails;
+    } catch (error) {
+      console.error({
+            message: "Error fetching patients: " + (error as Error).message,
+            location: "userRepository.getAllPatients"
+        });
+        throw new Error("Internal Server Error: Unable to fetch patients");
+    }
+  }
 }

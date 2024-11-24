@@ -1,9 +1,20 @@
+import { ObjectId } from "mongodb";
+import { OrderRepository } from "../../database/order/order.repository";
+import { OrderDbModel } from "../../database/order/orderDb.interface";
+import { PrescriptionRepository } from "../../database/prescription/prescription.repository";
+import { PerscriptionDbModel } from "../../database/prescription/prescriptionDb.interface";
 import { UserRepository } from "../../database/user/user.repository";
+import { OrderModel } from "./models/order.interace";
+import { PerscriptionModel } from "./models/perscription.interface";
 import { UserModel } from "./models/user.interface";
 
 
 export class UsersService {
-  constructor(private userRepository = new UserRepository()) {}
+  constructor(
+    private userRepository = new UserRepository(), 
+    private orderRepository = new OrderRepository(), 
+    private prescriptionRepository = new PrescriptionRepository()
+  ) {}
 
   public addUser = async (
     user: Partial<UserModel>,
@@ -67,4 +78,31 @@ export class UsersService {
 
     return user;
   };
+
+
+  //Function to get an array of all patient emails, to be used when a doctor is assigning a 
+  //perscription
+  async getAllPatientInfo(): Promise<object> {
+    return await this.userRepository.getAllPatients()
+  }
+
+  async createPrescription(prescription: PerscriptionModel): Promise<string> {
+    return await this.prescriptionRepository.insertPrescription(prescription)
+  }
+
+
+  async getPrescriptions(userId: string): Promise<PerscriptionModel[]> {
+    //Will throw an error if userId is invalid but probably wont happen
+    return await this.prescriptionRepository.getUserPrescriptions(new ObjectId(userId))
+  }
+
+  async createOrder(order: OrderModel): Promise<string> {
+    return await this.orderRepository.insertOrder(order)
+  }
+
+
+  async getOrders(userId: string): Promise<OrderModel[]> {
+    //Will throw an error if userId is invalid but probably wont happen
+    return await this.orderRepository.getUserOrders(new ObjectId(userId))
+  }
 }
