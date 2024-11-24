@@ -1,0 +1,10 @@
+export { default as VMBody } from './VMBody';
+export { default as VMContent } from './VMContent';
+export { default as VMEmail } from './VMEmail';
+export { default as VMHeading } from './VMHeading';
+export { default as VMHeadingWithIcon } from './VMHeadingWithIcon';
+export { default as VMLink } from './VMLink';
+export { default as VMTabularData } from './VMTabularData';
+export { default as VMText } from './VMText';
+export { default as VMList } from './VMList';
+export { default as VMListItem } from './VMListItem';
