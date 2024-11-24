@@ -1,11 +1,7 @@
 export class AppointmentRepository {
-    constructor(){}
+  constructor() {}
 
-    async insertAppointment(){
+  async insertAppointment() {}
 
-    }
-
-    async getUserAppointment(){
-
-    }
+  async getUserAppointment() {}
 }

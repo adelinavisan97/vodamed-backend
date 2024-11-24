@@ -1,18 +1,17 @@
-import { ObjectId } from "mongodb";
-import { OrderRepository } from "../../database/order/order.repository";
-import { OrderDbModel } from "../../database/order/orderDb.interface";
-import { PrescriptionRepository } from "../../database/prescription/prescription.repository";
-import { PerscriptionDbModel } from "../../database/prescription/prescriptionDb.interface";
-import { UserRepository } from "../../database/user/user.repository";
-import { OrderModel } from "./models/order.interace";
-import { PerscriptionModel } from "./models/perscription.interface";
-import { UserModel } from "./models/user.interface";
-
+import { ObjectId } from 'mongodb';
+import { OrderRepository } from '../../database/order/order.repository';
+import { OrderDbModel } from '../../database/order/orderDb.interface';
+import { PrescriptionRepository } from '../../database/prescription/prescription.repository';
+import { PerscriptionDbModel } from '../../database/prescription/prescriptionDb.interface';
+import { UserRepository } from '../../database/user/user.repository';
+import { OrderModel } from './models/order.interace';
+import { PerscriptionModel } from './models/perscription.interface';
+import { UserModel } from './models/user.interface';
 
 export class UsersService {
   constructor(
-    private userRepository = new UserRepository(), 
-    private orderRepository = new OrderRepository(), 
+    private userRepository = new UserRepository(),
+    private orderRepository = new OrderRepository(),
     private prescriptionRepository = new PrescriptionRepository()
   ) {}
 
@@ -22,7 +21,7 @@ export class UsersService {
   ): Promise<UserModel> => {
     try {
       // Validate
-      if (!cognitoSub) throw new Error("CognitoSub missing");
+      if (!cognitoSub) throw new Error('CognitoSub missing');
 
       const createdDate = user.createdDate ?? new Date();
       const userFull: UserModel = {
@@ -49,7 +48,7 @@ export class UsersService {
       const errorMessage = `Failed to add user. ${e}`;
       console.error({
         message: errorMessage,
-        location: "userService.addUser",
+        location: 'userService.addUser',
       });
       throw e;
     }
@@ -60,7 +59,7 @@ export class UsersService {
   ): Promise<UserModel | undefined> => {
     // Validation
     if (!userEmail) {
-      throw new Error("userEmail");
+      throw new Error('userEmail');
     }
 
     // Fetch end customer
@@ -71,7 +70,7 @@ export class UsersService {
       const errorMessage = `Failed to fetch user details. ${e}`;
       console.error({
         message: errorMessage,
-        location: "userService.getUser",
+        location: 'userService.getUser',
       });
       throw e;
     }
@@ -79,30 +78,29 @@ export class UsersService {
     return user;
   };
 
-
-  //Function to get an array of all patient emails, to be used when a doctor is assigning a 
+  //Function to get an array of all patient emails, to be used when a doctor is assigning a
   //perscription
   async getAllPatientInfo(): Promise<object> {
-    return await this.userRepository.getAllPatients()
+    return await this.userRepository.getAllPatients();
   }
 
   async createPrescription(prescription: PerscriptionModel): Promise<string> {
-    return await this.prescriptionRepository.insertPrescription(prescription)
+    return await this.prescriptionRepository.insertPrescription(prescription);
   }
-
 
   async getPrescriptions(userId: string): Promise<PerscriptionModel[]> {
     //Will throw an error if userId is invalid but probably wont happen
-    return await this.prescriptionRepository.getUserPrescriptions(new ObjectId(userId))
+    return await this.prescriptionRepository.getUserPrescriptions(
+      new ObjectId(userId)
+    );
   }
 
   async createOrder(order: OrderModel): Promise<string> {
-    return await this.orderRepository.insertOrder(order)
+    return await this.orderRepository.insertOrder(order);
   }
-
 
   async getOrders(userId: string): Promise<OrderModel[]> {
     //Will throw an error if userId is invalid but probably wont happen
-    return await this.orderRepository.getUserOrders(new ObjectId(userId))
+    return await this.orderRepository.getUserOrders(new ObjectId(userId));
   }
 }

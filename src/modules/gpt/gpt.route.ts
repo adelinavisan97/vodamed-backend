@@ -1,12 +1,12 @@
-import express from "express"
-import { VerifyMiddleware } from "../../shared/middleware/verfiy.middelware";
-import { GptService } from "./gpt.service";
+import express from 'express';
+import { VerifyMiddleware } from '../../shared/middleware/verfiy.middelware';
+import { GptService } from './gpt.service';
 
 const router = express.Router();
 const gptService = new GptService();
 const verifyMiddleware = new VerifyMiddleware();
 
-router.post("/", verifyMiddleware.verifyToken, async (req, res) => {
+router.post('/', verifyMiddleware.verifyToken, async (req, res) => {
   const { prompt } = req.body;
   try {
     const response = await gptService.getChatGPTResponse(prompt);
@@ -16,4 +16,4 @@ router.post("/", verifyMiddleware.verifyToken, async (req, res) => {
   }
 });
 
-export default router
+export default router;
