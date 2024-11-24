@@ -1,6 +1,11 @@
 'use strict';
-import {SES, SendEmailRequest, SendEmailCommandOutput} from '@aws-sdk/client-ses';
-import {Options, render} from '@react-email/render';
+import {
+  SES,
+  SendEmailRequest,
+  SendEmailCommandOutput,
+} from '@aws-sdk/client-ses';
+import { Options, render } from '@react-email/render';
+import { config } from '../../../config';
 /**
  * Allows for an instance of SES to be instantiated.
  * @class
@@ -13,7 +18,14 @@ export class Ses {
 
   /** Creates an instance of Cognito when a Logger instance is passed in as an argument */
   constructor() {
-    this.ses = new SES({apiVersion: this.SESVERSION, region: this.defaultRegion});
+    this.ses = new SES({
+      apiVersion: this.SESVERSION,
+      region: this.defaultRegion,
+      credentials: {
+        accessKeyId: config.AccessKeyId,
+        secretAccessKey: config.SecretAccessKey,
+      },
+    });
   }
 
   /**
@@ -21,7 +33,9 @@ export class Ses {
    * @param {object} params The main parameters used in the function.
    * @return {promise} Returns a promise.
    */
-  async sendSesEmail(sendSesEmailArgs: SendEmailRequest): Promise<SendEmailCommandOutput> {
+  async sendSesEmail(
+    sendSesEmailArgs: SendEmailRequest
+  ): Promise<SendEmailCommandOutput> {
     const innerFunctionName = 'ses.sendSesEmail';
     console.log(
       `About to send email with subject: ${sendSesEmailArgs.Message?.Subject}, to: ${sendSesEmailArgs.Destination}`
@@ -36,7 +50,12 @@ export class Ses {
             console.log(`Successfully sent email ${data}`), resolve(data);
           } else {
             console.log('Send Email Failed: data undefined');
-            throw new Error(JSON.stringify({message: 'Send Email Failed: data undefined', code: 424}));
+            throw new Error(
+              JSON.stringify({
+                message: 'Send Email Failed: data undefined',
+                code: 424,
+              })
+            );
           }
         }
       });
@@ -61,7 +80,7 @@ export class Ses {
     bcc?: Array<string>
   ): Promise<SendEmailCommandOutput> {
     return this.sendSesEmail({
-      Source: `noreply@${sourceEmail}`,
+      Source: `${sourceEmail}`,
       Destination: {
         ToAddresses: to,
         CcAddresses: cc,
@@ -76,6 +95,7 @@ export class Ses {
         },
         Subject: {
           Data: subject,
+          Charset: 'UTF-8',
         },
       },
     });
@@ -100,9 +120,17 @@ export class Ses {
     bcc?: Array<string>,
     bodyRenderOptions?: Options
   ): Promise<SendEmailCommandOutput> {
-    return this.useSendSesEmail(subject, render(bodyTemplate, bodyRenderOptions), sourceEmail, to, cc, bcc);
+    const renderedBody = await render(bodyTemplate, bodyRenderOptions);
+    return this.useSendSesEmail(
+      subject,
+      renderedBody,
+      sourceEmail,
+      to,
+      cc,
+      bcc
+    );
   }
 }
 
-export type {SendEmailCommandOutput, SendEmailRequest};
-export default Ses
+export type { SendEmailCommandOutput, SendEmailRequest };
+export default Ses;

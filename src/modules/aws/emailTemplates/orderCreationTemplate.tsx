@@ -5,41 +5,33 @@ import {
   VMText,
   VMTabularData,
   VMEmail,
-  VMLink,
   VMHeadingWithIcon,
+  VMList,
+  VMListItem,
 } from './emailComponents';
-import { NumberRequestEmailFields } from './emailTemplate';
+import { OrderCreationFields } from './orderFields';
 
-export default function numberRequestEmailBody(
-  fields: NumberRequestEmailFields,
-  isAdminEmail: boolean
+export default function orderCreationEmailBody(
+  fields: OrderCreationFields
 ): React.ReactElement {
-  const header = isAdminEmail
-    ? 'Number request raised for ' + fields.customerName
-    : 'Thank you for your number request.';
+  const header = 'Order created for ' + fields.customerName;
 
   return (
-    <VMEmail previewText={fields.previewText}>
+    <VMEmail previewText="New order created">
       <VMHeading heading={header} tag="h1" />
 
       <Section>
-        <VMText noMargin>Hello from UC Hub,</VMText>
-        <VMText>
-          A number request {fields.orderId} has been{'  '}
-          <VMText span bold>
-            {fields.orderUpdatedStatus}
-          </VMText>{' '}
-          from your {isAdminEmail && "customer's "}UC Hub account.
-        </VMText>
+        <VMText noMargin>Hello {fields.customerName},</VMText>
+        <VMText>A new order has been created from your Vodamed account.</VMText>
       </Section>
 
       <VMHeadingWithIcon
         icon={{
-          src: 'https://hub.ucc-dev.vodafone.com/core/img/email/dial_pad.png',
-          alt: 'Vodafone Dial Pad',
+          src: 'https://www.flaticon.com/free-icons/list',
+          alt: 'Order pad icon',
           style: { marginLeft: '-8px' },
         }}
-        heading={'Number request summary'}
+        heading={'Order summary'}
         tag="h2"
       />
 
@@ -47,51 +39,27 @@ export default function numberRequestEmailBody(
         {fields.customerName && (
           <VMTabularData title="Customer name" text={fields.customerName} />
         )}
-        {fields.endCustomerName && (
-          <VMTabularData title="End user name" text={fields.endCustomerName} />
-        )}
         {fields.orderDate && (
           <VMTabularData title="Ordered on" text={fields.orderDate} />
         )}
-        {fields.country && (
-          <VMTabularData title="Country" text={fields.country} />
+        {fields.shippingAddress && (
+          <VMTabularData
+            title="Shipping address"
+            text={fields.shippingAddress}
+          />
         )}
-        {fields.numberType && (
-          <VMTabularData title="Number type" text={fields.numberType} />
+        <VMList>
+          {fields.orderItems.map((item, index) => (
+            <VMListItem key={index}>
+              <strong>{item.medicine}</strong> - Quantity: {item.quantity},
+              Price: ${item.price}, Total: ${item.total}
+            </VMListItem>
+          ))}
+        </VMList>
+        {fields.totalAmount && (
+          <VMTabularData title="Total amount" text={fields.totalAmount} />
         )}
-        {fields.city && <VMTabularData title="Area" text={fields.city} />}
-        {fields.useCase && (
-          <VMTabularData title="Use case" text={fields.useCase} />
-        )}
-        {fields.quantity ? (
-          <VMTabularData title="Quantity" text={fields.quantity} />
-        ) : null}
       </Section>
-
-      <Section>
-        <VMText>
-          To view regulatory requirements for the request, click here:{' '}
-          <VMLink href={fields.regulatoryRequirementsUrl} asButton>
-            Regulatory requirements
-          </VMLink>
-        </VMText>
-      </Section>
-
-      <Section>
-        <VMText>
-          <VMLink href={fields.orderUrl}>Click here</VMLink> to go to{' '}
-          {isAdminEmail && 'the '} {!isAdminEmail && 'your '}
-          number request.
-        </VMText>
-      </Section>
-
-      {!isAdminEmail && (
-        <Section>
-          <VMText>
-            Our team aims to reply to your enquiries within one business day.
-          </VMText>
-        </Section>
-      )}
     </VMEmail>
   );
 }

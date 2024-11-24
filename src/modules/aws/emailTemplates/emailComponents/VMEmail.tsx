@@ -17,12 +17,12 @@ const VMEmail = ({ children, previewText }: VMEmailProps) => {
         />
       </Head>
       <VMBody>
-        <Section>
+        {/* <Section>
           <Img
             src="https://hub.ucc-dev.vodafone.com/core/img/email/banner_header.png"
             alt="VodaMed Header Banner"
           />
-        </Section>
+        </Section> */}
 
         {previewText && <Preview>{previewText}</Preview>}
 
@@ -35,12 +35,12 @@ const VMEmail = ({ children, previewText }: VMEmailProps) => {
           </Section>
         </VMContent>
 
-        <Section>
+        {/* <Section>
           <Img
             src="https://hub.ucc-dev.vodafone.com/core/img/email/banner_footer.png"
             alt="VodaMed Footer Banner"
           />
-        </Section>
+        </Section> */}
       </VMBody>
     </Html>
   );

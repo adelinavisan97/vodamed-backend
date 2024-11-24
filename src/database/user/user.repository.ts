@@ -1,13 +1,12 @@
-import { ObjectId } from "mongodb";
-import { UserModel } from "../../modules/users/models/user.interface";
-import { UserDbModel } from "./userDb.interface";
-import { getDb } from "../connection";
-import { config } from "../../config";
-
+import { ObjectId } from 'mongodb';
+import { UserModel } from '../../modules/users/models/user.interface';
+import { UserDbModel } from './userDb.interface';
+import { getDb } from '../connection';
+import { config } from '../../config';
 
 interface UserInfo {
-  userId: string,
-  isDoctor: boolean
+  userId: string;
+  isDoctor: boolean;
 }
 export class UserRepository {
   constructor() {}
@@ -17,10 +16,14 @@ export class UserRepository {
       this.validateUser(user);
     } catch (error) {
       console.error({
-        message: "Failed to add user, data validation failed: " + JSON.stringify(error),
-        location: "userRepository.addUser",
+        message:
+          'Failed to add user, data validation failed: ' +
+          JSON.stringify(error),
+        location: 'userRepository.addUser',
       });
-      throw new Error("Internal Server Error 500: Failed to validate user data");
+      throw new Error(
+        'Internal Server Error 500: Failed to validate user data'
+      );
     }
     const userDb: UserDbModel = {
       _email: user.email,
@@ -41,10 +44,10 @@ export class UserRepository {
       return user;
     } catch (error) {
       console.error({
-        message: "Failed to add user to the database: " + JSON.stringify(error),
-        location: "userRepository.addUser",
+        message: 'Failed to add user to the database: ' + JSON.stringify(error),
+        location: 'userRepository.addUser',
       });
-      throw new Error("Internal Server Error 500: Failed to create user");
+      throw new Error('Internal Server Error 500: Failed to create user');
     }
   };
 
@@ -52,18 +55,18 @@ export class UserRepository {
     createdDate: Date,
     updatedDate: Date
   ): void => {
-    if (createdDate !== updatedDate) throw new Error("updatedDate");
+    if (createdDate !== updatedDate) throw new Error('updatedDate');
   };
 
   private validateUser = (user: UserModel) => {
-    if (!user.email) throw new Error("email");
-    if (!user.givenName) throw new Error("givenName");
-    if (!user.familyName) throw new Error("familyName");
-    if (!user.cognitoId) throw new Error("cognitoId");
-    if (!user.createdDate) throw new Error("createdDate");
-    if (!user.createdBy) throw new Error("createdBy");
-    if (!user.updatedDate) throw new Error("updatedDate");
-    if (!user.updatedBy) throw new Error("updatedBy");
+    if (!user.email) throw new Error('email');
+    if (!user.givenName) throw new Error('givenName');
+    if (!user.familyName) throw new Error('familyName');
+    if (!user.cognitoId) throw new Error('cognitoId');
+    if (!user.createdDate) throw new Error('createdDate');
+    if (!user.createdBy) throw new Error('createdBy');
+    if (!user.updatedDate) throw new Error('updatedDate');
+    if (!user.updatedBy) throw new Error('updatedBy');
     this.validInsertionDates(user.createdDate, user.updatedDate);
   };
 
@@ -84,7 +87,7 @@ export class UserRepository {
     userEmail: string
   ): Promise<UserModel | undefined> => {
     try {
-      if (!userEmail) throw new Error("User email is missing.");
+      if (!userEmail) throw new Error('User email is missing.');
       const mongoClient = getDb();
       const result = (await mongoClient
         .collection(config.UserCollectionName)
@@ -92,8 +95,27 @@ export class UserRepository {
       return result ? this.toUserModel(result) : undefined; //might actually want to return as the dbmodel so they can have the id on the frontend
     } catch (error) {
       console.error({
-        message: "Failed to fetch user from the database: " + JSON.stringify(error),
-        location: "userRepository.getUser",
+        message:
+          'Failed to fetch user from the database: ' + JSON.stringify(error),
+        location: 'userRepository.getUser',
+      });
+      throw new Error();
+    }
+  };
+
+  public getUserById = async (userId: ObjectId): Promise<UserModel> => {
+    try {
+      if (!userId) throw new Error('User ID is missing.');
+      const mongoClient = getDb();
+      const result = (await mongoClient
+        .collection(config.UserCollectionName)
+        .findOne({ _id: new ObjectId(userId) })) as unknown as UserDbModel;
+      return this.toUserModel(result); //might actually want to return as the dbmodel so they can have the id on the frontend
+    } catch (error) {
+      console.error({
+        message:
+          'Failed to fetch user from the database: ' + JSON.stringify(error),
+        location: 'userRepository.getUser',
       });
       throw new Error();
     }
@@ -101,28 +123,27 @@ export class UserRepository {
 
   async getUserInfo(userEmail: string): Promise<UserInfo> {
     try {
-        const mongoClient = getDb();
-        const result = await mongoClient
-            .collection<UserDbModel>(config.UserCollectionName)
-            .findOne({ _email: userEmail });
+      const mongoClient = getDb();
+      const result = await mongoClient
+        .collection<UserDbModel>(config.UserCollectionName)
+        .findOne({ _email: userEmail });
 
-        if (!result) {
-            throw new Error(`No user found with email: ${userEmail}`);
-        }
+      if (!result) {
+        throw new Error(`No user found with email: ${userEmail}`);
+      }
 
-        return {
-          userId: result._id.toString(),
-          isDoctor: result.isAdmin,
-        }
-
+      return {
+        userId: result._id.toString(),
+        isDoctor: result.isAdmin,
+      };
     } catch (error) {
-        console.error({
-            message: "Error fetching user ID: " + (error as Error).message,
-            location: "userRepository.getUserId"
-        });
-        throw new Error("Internal Server Error: Unable to fetch user ID");
+      console.error({
+        message: 'Error fetching user ID: ' + (error as Error).message,
+        location: 'userRepository.getUserId',
+      });
+      throw new Error('Internal Server Error: Unable to fetch user ID');
     }
-}
+  }
   //Probably going to need a function to get all users for doctors assigning prescriptions
   async getAllPatients(): Promise<object[]> {
     try {
@@ -137,18 +158,21 @@ export class UserRepository {
         throw new Error('Result is not an array');
       }
 
-      const formattedDetails = result.reduce<{ id: any; email: any }[]>((acc, current) => {
-        // Push the object with `id` and `email` properties into the accumulator
-        acc.push({ id: current._id.toString(), email: current._email });
-        return acc;
-      }, []);  // Initializing as an empty array
-    return formattedDetails;
+      const formattedDetails = result.reduce<{ id: any; email: any }[]>(
+        (acc, current) => {
+          // Push the object with `id` and `email` properties into the accumulator
+          acc.push({ id: current._id.toString(), email: current._email });
+          return acc;
+        },
+        []
+      ); // Initializing as an empty array
+      return formattedDetails;
     } catch (error) {
       console.error({
-            message: "Error fetching patients: " + (error as Error).message,
-            location: "userRepository.getAllPatients"
-        });
-        throw new Error("Internal Server Error: Unable to fetch patients");
+        message: 'Error fetching patients: ' + (error as Error).message,
+        location: 'userRepository.getAllPatients',
+      });
+      throw new Error('Internal Server Error: Unable to fetch patients');
     }
   }
 }
