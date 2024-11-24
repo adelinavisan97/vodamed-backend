@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 
+//Feature was removed as part of the MVP
 export interface AppointmentDbModel {
   _id?: ObjectId;
   patient: ObjectId; // Reference to the User (patient)
