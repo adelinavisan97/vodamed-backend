@@ -16,4 +16,5 @@ export const config = {
     JwtSecret: process.env.JWT_SECRET!,
     OpenAPiKey: process.env.OPEN_API_KEY!,
     DbName: process.env.MONGO_DB_NAME!,
+    SourceEmail: process.env.SOURCE_EMAIL!,
 };
