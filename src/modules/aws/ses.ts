@@ -1,6 +1,10 @@
 'use strict';
-import {SES, SendEmailRequest, SendEmailCommandOutput} from '@aws-sdk/client-ses';
-import {Options, render} from '@react-email/render';
+import {
+  SES,
+  SendEmailRequest,
+  SendEmailCommandOutput,
+} from '@aws-sdk/client-ses';
+import { Options, render } from '@react-email/render';
 /**
  * Allows for an instance of SES to be instantiated.
  * @class
@@ -13,7 +17,10 @@ export class Ses {
 
   /** Creates an instance of Cognito when a Logger instance is passed in as an argument */
   constructor() {
-    this.ses = new SES({apiVersion: this.SESVERSION, region: this.defaultRegion});
+    this.ses = new SES({
+      apiVersion: this.SESVERSION,
+      region: this.defaultRegion,
+    });
   }
 
   /**
@@ -21,7 +28,9 @@ export class Ses {
    * @param {object} params The main parameters used in the function.
    * @return {promise} Returns a promise.
    */
-  async sendSesEmail(sendSesEmailArgs: SendEmailRequest): Promise<SendEmailCommandOutput> {
+  async sendSesEmail(
+    sendSesEmailArgs: SendEmailRequest
+  ): Promise<SendEmailCommandOutput> {
     const innerFunctionName = 'ses.sendSesEmail';
     console.log(
       `About to send email with subject: ${sendSesEmailArgs.Message?.Subject}, to: ${sendSesEmailArgs.Destination}`
@@ -36,7 +45,12 @@ export class Ses {
             console.log(`Successfully sent email ${data}`), resolve(data);
           } else {
             console.log('Send Email Failed: data undefined');
-            throw new Error(JSON.stringify({message: 'Send Email Failed: data undefined', code: 424}));
+            throw new Error(
+              JSON.stringify({
+                message: 'Send Email Failed: data undefined',
+                code: 424,
+              })
+            );
           }
         }
       });
@@ -91,18 +105,18 @@ export class Ses {
    * @param bcc the list of email addresses to send the email to as bcc.
    * @returns a Promise<SendEmailCommandOutput> object.
    */
-  async sendSesEmailUsingReactTemplate(
-    subject: string,
-    sourceEmail: string,
-    bodyTemplate: React.ReactElement,
-    to?: Array<string>,
-    cc?: Array<string>,
-    bcc?: Array<string>,
-    bodyRenderOptions?: Options
-  ): Promise<SendEmailCommandOutput> {
-    return this.useSendSesEmail(subject, render(bodyTemplate, bodyRenderOptions), sourceEmail, to, cc, bcc);
-  }
+  // async sendSesEmailUsingReactTemplate(
+  //   subject: string,
+  //   sourceEmail: string,
+  //   bodyTemplate: React.ReactElement,
+  //   to?: Array<string>,
+  //   cc?: Array<string>,
+  //   bcc?: Array<string>,
+  //   bodyRenderOptions?: Options
+  // ): Promise<SendEmailCommandOutput> {
+  //   return this.useSendSesEmail(subject, render(bodyTemplate, bodyRenderOptions), sourceEmail, to, cc, bcc);
+  // }
 }
 
-export type {SendEmailCommandOutput, SendEmailRequest};
-export default Ses
+export type { SendEmailCommandOutput, SendEmailRequest };
+export default Ses;
