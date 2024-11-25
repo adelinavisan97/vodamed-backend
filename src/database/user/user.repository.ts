@@ -103,6 +103,29 @@ export class UserRepository {
     }
   };
 
+  async getUserById(userId: ObjectId): Promise<UserModel> {
+    try {
+      const mongoClient = getDb();
+      const result = await mongoClient
+        .collection<UserDbModel>(config.UserCollectionName)
+        .findOne({ _id: new ObjectId(userId) });
+      if (!result) {
+        throw new Error(`No user found with id: ${userId}`);
+      }
+      return this.toUserModel(result);
+    } catch (error) {
+      console.error(error);
+      console.error({
+        message:
+          'Failed to fetch user from the database: ' + JSON.stringify(error),
+        location: 'userRepository.getUserById',
+      });
+      throw new Error(
+        'Internal Server Error: Unable to fetch user details for email sending'
+      );
+    }
+  }
+
   async getUserInfo(userEmail: string): Promise<UserInfo> {
     try {
       const mongoClient = getDb();

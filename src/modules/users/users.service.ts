@@ -1,18 +1,23 @@
 import { ObjectId } from 'mongodb';
 import { OrderRepository } from '../../database/order/order.repository';
-import { OrderDbModel } from '../../database/order/orderDb.interface';
 import { PrescriptionRepository } from '../../database/prescription/prescription.repository';
-import { PerscriptionDbModel } from '../../database/prescription/prescriptionDb.interface';
 import { UserRepository } from '../../database/user/user.repository';
-import { OrderModel } from './models/order.interace';
-import { PerscriptionModel } from './models/perscription.interface';
+import {
+  PerscriptionModel,
+  PrescriptionEmailItems,
+} from './models/perscription.interface';
 import { UserModel } from './models/user.interface';
+import { MailService } from '../../shared/email/email.service';
+import { MedicineRepository } from '../../database/medicine/medicine.repository';
+import { OrderEmailItems, OrderModel } from './models/order.interace';
 
 export class UsersService {
   constructor(
     private userRepository = new UserRepository(),
     private orderRepository = new OrderRepository(),
-    private prescriptionRepository = new PrescriptionRepository()
+    private prescriptionRepository = new PrescriptionRepository(),
+    private mailService = new MailService(),
+    private medicineRepository = new MedicineRepository()
   ) {}
 
   public addUser = async (
@@ -84,8 +89,44 @@ export class UsersService {
     return await this.userRepository.getAllPatients();
   }
 
+  //Function to add a presctiption to the database and trigger an email
   async createPrescription(prescription: PerscriptionModel): Promise<string> {
-    return await this.prescriptionRepository.insertPrescription(prescription);
+    //Prep
+    const userDetails = await this.userRepository.getUserById(
+      prescription.patient
+    );
+
+    const prescriptionItemsWithNames: PrescriptionEmailItems[] =
+      await Promise.all(
+        prescription.medicines.map(async (item) => {
+          const medicineName = await this.medicineRepository.getMedicineName(
+            item.medicine.toString()
+          );
+          return {
+            medicine: medicineName,
+            dosage: item.dosage,
+            quantity: item.quantity,
+          };
+        })
+      );
+    let prescriptionItemDetails: string = '';
+    prescriptionItemsWithNames.forEach((item, index) => {
+      prescriptionItemDetails += `Medicine ${index + 1}:\n`;
+      prescriptionItemDetails += ` - Name: ${item.medicine}\n`;
+      prescriptionItemDetails += ` - Dosage: ${item.dosage}\n`;
+      prescriptionItemDetails += ` - Quantity: ${item.quantity}\n`;
+      prescriptionItemDetails += `\n`;
+    });
+
+    //Fufuil
+    const response = await this.prescriptionRepository.insertPrescription(
+      prescription
+    );
+    await this.mailService.sendPrescriptionMail(
+      userDetails,
+      prescriptionItemDetails
+    );
+    return response;
   }
 
   async getPrescriptions(userId: string): Promise<PerscriptionModel[]> {
@@ -95,8 +136,38 @@ export class UsersService {
     );
   }
 
+  //Function to add an order to the database and trigger an email
   async createOrder(order: OrderModel): Promise<string> {
-    return await this.orderRepository.insertOrder(order);
+    //Prep
+    const userDetails = await this.userRepository.getUserById(order.user);
+
+    const orderItemsWithNames: OrderEmailItems[] = await Promise.all(
+      order.orderItems.map(async (item) => {
+        const medicineName = await this.medicineRepository.getMedicineName(
+          item.medicine.toString()
+        );
+        return {
+          medicine: medicineName,
+          quantity: item.quantity,
+          price: item.price,
+          total: item.total,
+        };
+      })
+    );
+    let orderItemDetails: string = '';
+    orderItemsWithNames.forEach((item, index) => {
+      orderItemDetails += `Medicine ${index + 1}:\n`;
+      orderItemDetails += ` - Name: ${item.medicine}\n`;
+      orderItemDetails += ` - Quantity: ${item.quantity}\n`;
+      orderItemDetails += ` - Price: £${item.price}\n`;
+      orderItemDetails += ` - Toral: £${item.total}\n`;
+      orderItemDetails += `\n`;
+    });
+
+    //Fufuil
+    const response = await this.orderRepository.insertOrder(order);
+    await this.mailService.sendOrderMail(userDetails, order, orderItemDetails);
+    return response;
   }
 
   async getOrders(userId: string): Promise<OrderModel[]> {

@@ -1,5 +1,11 @@
 import { ObjectId } from 'mongodb';
 
+export interface PrescriptionEmailItems {
+  medicine: string;
+  dosage: string;
+  quantity: number;
+}
+
 //Would probably wannt to split into request and response objects if we were doing this properly
 export interface PerscriptionModel {
   patient: ObjectId; //might need to swap this to email when the frontend makes the request MIGHT NEED TO BE STRING NOT SURE HOW FRONTEND WILL BE PASSING
