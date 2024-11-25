@@ -1,13 +1,16 @@
+import { OrderModel } from './models/order.interace';
 import express from 'express';
 import { UsersService } from './users.service';
 import { AuthenticationService } from '../aws/authentication.service';
 import { VerifyMiddleware } from '../../shared/middleware/verfiy.middelware';
 import { checkIfDoctor } from '../../shared/middleware/checkDoctor.middleware';
+import { MailService } from '../../shared/email/email.service';
 
 const router = express.Router();
 const userService = new UsersService();
 const authenticaionService = new AuthenticationService();
 const verifyMiddleware = new VerifyMiddleware();
+const mailService = new MailService();
 
 //Might want to rework to have an admin and standard user routes
 router.post('/signup', async (req, res) => {
@@ -139,5 +142,16 @@ router.get(
     }
   }
 );
+
+router.post('/send', async (req, res) => {
+  try {
+    //await mailService.sendOrderMail('willwood98@outlook.com', req.body);
+    await mailService.sendPrescriptionMail('willwood98@outlook.com', req.body);
+    res.status(200).json();
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export default router;
