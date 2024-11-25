@@ -83,6 +83,31 @@ export class UsersService {
     return user;
   };
 
+  // Get user info by ID
+  public getUserById = async (
+    userId: string
+  ): Promise<UserModel | undefined> => {
+    // Validation
+    if (!userId) {
+      throw new Error('userId');
+    }
+
+    // Fetch end customer
+    let user: UserModel | undefined;
+    try {
+      user = await this.userRepository.getUserById(new ObjectId(userId));
+    } catch (e) {
+      const errorMessage = `Failed to fetch user details. ${e}`;
+      console.error({
+        message: errorMessage,
+        location: 'userService.getUser',
+      });
+      throw e;
+    }
+
+    return user;
+  };
+
   //Function to get an array of all patient emails, to be used when a doctor is assigning a
   //perscription
   async getAllPatientInfo(): Promise<object> {

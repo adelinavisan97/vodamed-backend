@@ -69,6 +69,21 @@ router.get('/info', verifyMiddleware.verifyToken, async (req, res) => {
   }
 });
 
+// This endpoint will return a user's information by their ID
+router.get('/info/:id', verifyMiddleware.verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(user);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 //This endpoint will return the emails and ids of all users who are not admins (patients)
 router.get(
   '/getAllPatientInfo',
