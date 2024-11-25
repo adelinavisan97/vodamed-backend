@@ -91,41 +91,41 @@ export class UsersService {
 
   //Function to add a presctiption to the database and trigger an email
   async createPrescription(prescription: PerscriptionModel): Promise<string> {
-    //Prep
-    const userDetails = await this.userRepository.getUserById(
-      prescription.patient
-    );
-
-    const prescriptionItemsWithNames: PrescriptionEmailItems[] =
-      await Promise.all(
-        prescription.medicines.map(async (item) => {
-          const medicineName = await this.medicineRepository.getMedicineName(
-            item.medicine.toString()
-          );
-          return {
-            medicine: medicineName,
-            dosage: item.dosage,
-            quantity: item.quantity,
-          };
-        })
-      );
-    let prescriptionItemDetails: string = '';
-    prescriptionItemsWithNames.forEach((item, index) => {
-      prescriptionItemDetails += `Medicine ${index + 1}:\n`;
-      prescriptionItemDetails += ` - Name: ${item.medicine}\n`;
-      prescriptionItemDetails += ` - Dosage: ${item.dosage}\n`;
-      prescriptionItemDetails += ` - Quantity: ${item.quantity}\n`;
-      prescriptionItemDetails += `\n`;
-    });
-
     //Fufuil
     const response = await this.prescriptionRepository.insertPrescription(
       prescription
     );
-    await this.mailService.sendPrescriptionMail(
-      userDetails,
-      prescriptionItemDetails
-    );
+    if (prescription.emailNotification) {
+      const userDetails = await this.userRepository.getUserById(
+        prescription.patient
+      );
+
+      const prescriptionItemsWithNames: PrescriptionEmailItems[] =
+        await Promise.all(
+          prescription.medicines.map(async (item) => {
+            const medicineName = await this.medicineRepository.getMedicineName(
+              item.medicine.toString()
+            );
+            return {
+              medicine: medicineName,
+              dosage: item.dosage,
+              quantity: item.quantity,
+            };
+          })
+        );
+      let prescriptionItemDetails: string = '';
+      prescriptionItemsWithNames.forEach((item, index) => {
+        prescriptionItemDetails += `Medicine ${index + 1}:\n`;
+        prescriptionItemDetails += ` - Name: ${item.medicine}\n`;
+        prescriptionItemDetails += ` - Dosage: ${item.dosage}\n`;
+        prescriptionItemDetails += ` - Quantity: ${item.quantity}\n`;
+        prescriptionItemDetails += `\n`;
+      });
+      await this.mailService.sendPrescriptionMail(
+        userDetails,
+        prescriptionItemDetails
+      );
+    }
     return response;
   }
 
