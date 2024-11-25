@@ -143,15 +143,4 @@ router.get(
   }
 );
 
-// router.post('/send', async (req, res) => {
-//   try {
-//     //await mailService.sendOrderMail('willwood98@outlook.com', req.body);
-//     await mailService.sendPrescriptionMail('willwood98@outlook.com', req.body);
-//     res.status(200).json();
-//   } catch (error: any) {
-//     console.error(error);
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
 export default router;

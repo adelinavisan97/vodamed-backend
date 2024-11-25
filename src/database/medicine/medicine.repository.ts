@@ -2,6 +2,7 @@ import { MedicineModel } from '../../modules/medicine/models/medicine.interface'
 import { MedicineDbModel } from './medicineDb.interface';
 import { getDb } from '../connection';
 import { config } from '../../config';
+import { ObjectId } from 'mongodb';
 
 export class MedicineRepository {
   constructor() {}
@@ -50,6 +51,22 @@ export class MedicineRepository {
       console.error({
         message: 'Error fetching medicine: ' + JSON.stringify(error),
         location: 'medicineRepository.getAllMedicine',
+      });
+      throw new Error(`Internal Server Error 500: Error fetching medicine`);
+    }
+  }
+
+  public async getMedicineName(id: string) {
+    try {
+      const mongoClient = getDb();
+      const medicine = await mongoClient
+        .collection<MedicineDbModel>(config.MedicineCollectionName)
+        .findOne({ _id: new ObjectId(id) });
+      return medicine!.name;
+    } catch (error) {
+      console.error({
+        message: 'Error fetching medicine: ' + JSON.stringify(error),
+        location: 'medicineRepository.getMedicine',
       });
       throw new Error(`Internal Server Error 500: Error fetching medicine`);
     }

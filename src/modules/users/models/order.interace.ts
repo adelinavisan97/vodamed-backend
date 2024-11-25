@@ -1,5 +1,12 @@
 import { ObjectId } from 'mongodb';
 
+export interface OrderEmailItems {
+  medicine: string;
+  quantity: number;
+  price: number;
+  total: number;
+}
+
 export interface OrderItem {
   medicine: ObjectId;
   quantity: number;
